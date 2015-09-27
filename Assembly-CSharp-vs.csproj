@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{8F6E858A-C176-F38E-9772-B667B67DA8EE}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_5_1_2;UNITY_5_1;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_LICENSE;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_EDITOR_METRICS;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_LOCALIZATION;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE;PLATFORM_PC</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\AutoInitialize.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\Api.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\ApiUtil.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\BugReportApi.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\BugReportScreenshotUtil.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\CircularBuffer.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\EditorUtil.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\OptionControlFactory.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\OptionDefinition.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\Paths.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\Service.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\Strings.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\Util.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Profiler\ProfilerCameraListener.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Profiler\ProfilerLateUpdateListener.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Profiler\ProfilerServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\SRDebug.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\SRDebuggerInit.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\SROptions.Attributes.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\SROptions.Test.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\SROptions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IBugReportService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IConsoleService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IDebugCameraService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IDebugPanelService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IDebugService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IDebugTriggerService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IDockConsoleService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IOptionsService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IPinEntryService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IPinnedOptionsService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\IProfilerService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\ISystemInformationService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\BugReportApiService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\BugReportPopoverService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\DebugCameraServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\DebugPanelServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\DebugTriggerImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\DockConsoleServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\KeyboardShortcutListenerService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\OptionsServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\PinEntryServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\PinnedUIServiceImpl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\SRDebugService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\StandardConsoleService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\Implementation\SystemInformationService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Services\ServiceSelectors.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Settings.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\ConsoleEntryView.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\ConsoleLogControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\ActionControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\BoolControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\DataBoundControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\EnumControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\NumberControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\OptionsControlBase.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Data\StringControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\InfoBlock.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\MultiTapButton.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\PinEntryControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Profiler\ProfilerFPSLabel.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Profiler\ProfilerMemoryBlock.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\Profiler\ProfilerMonoBlock.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\ProfilerEnableControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\ProfilerGraphAxisLabel.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\ProfilerGraphControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Controls\SRTabButton.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\DebugPanelRoot.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\DebuggerTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\MobileMenuController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\BugReportPopoverRoot.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\BugReportSheetController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\CategoryGroup.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\ConfigureCanvasFromSettings.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\ConsoleTabQuickViewControl.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\DebugPanelBackgroundBehaviour.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\DockConsoleRoot.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\IEnableTab.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\LoadingSpinnerBehaviour.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\PinnedUIRoot.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\SRTab.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\SRTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\ScrollRectPatch.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\ScrollSettingsBehaviour.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\SetLayerFromSettings.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\TriggerRoot.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Other\VersionTextBehaviour.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Tabs\BugReportTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Tabs\ConsoleTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Tabs\InfoTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Tabs\OptionsTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\UI\Tabs\ProfilerTabController.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\External\Jetbrains.Annotations.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\External\MiniJSON.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Internal\ComponentMenuPaths.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Collections\SRList.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Components\SRAutoSingleton.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Components\SRMonoBehaviour.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Components\SRMonoBehaviourEx.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Components\SRSingleton.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Coroutines.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Extensions\FloatExtensions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Extensions\GameObjectExtensions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Extensions\IListExtensions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Extensions\NetFxExtensions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Extensions\StringExtensions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Extensions\TransformExtensions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\AssetUtil.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\Hierarchy.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\MethodReference.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\PropertyReference.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRDebugUtil.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRFileUtil.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRInstantiate.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRMath.Tweening.Functions.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRMath.Tweening.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRMath.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Helpers\SRReflection.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Service\Attributes.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Service\IAsyncService.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Service\SRDependencyServiceBase.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Service\SRSceneServiceBase.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Service\SRServiceBase.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\Service\SRServiceManager.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\ContentFitText.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\CopyLayoutElement.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\CopyPreferredSize.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\DragHandle.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\FlashGraphic.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\InheritColour.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\Layout\FlowLayoutGroup.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\Layout\VirtualVerticalLayoutGroup.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\LongPressButton.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\ResponsiveBase.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\ResponsiveEnable.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\ResponsiveResize.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\SRNumberButton.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\SRNumberSpinner.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\SRRetinaScaler.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\SRSpinner.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\SRText.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\StyleComponent.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\StyleRoot.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\StyleSheet.cs" />
+     <Compile Include="Assets\Scripts\lib\SRF\Scripts\UI\Unselectable.cs" />
+     <Compile Include="Assets\Scripts\lib\assetBundleManager\AssetBundleManager.cs" />
+     <Compile Include="Assets\Scripts\lib\assetBundleManager\AssetBundleUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\assetManager\AssetManager.cs" />
+     <Compile Include="Assets\Scripts\lib\assetManager\AssetUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\assetManager\AssetUnitBase.cs" />
+     <Compile Include="Assets\Scripts\lib\assetManager\AssetUnitData.cs" />
+     <Compile Include="Assets\Scripts\lib\audio\MusicPlay.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroDamage\BattleDamageNum.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroDamage\BattleDamageNumGroup.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroDamage\BattleDamageNumUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroHpBar\BattleHeroHpBar.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroHpBar\BattleHeroHpBarUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroShadow\BattleHeroShadow.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleHeroShadow\BattleHeroShadowUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleSkillIcon\BattleSkillIcon.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleSkillIcon\BattleSkillIconUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleSpeedBar\BattleSpeedBar.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleSpeedBar\BattleSpeedBarHelper.cs" />
+     <Compile Include="Assets\Scripts\lib\battleHeroTools\battleSpeedBar\BattleSpeedBarUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\cameraControl\CameraControl.cs" />
+     <Compile Include="Assets\Scripts\lib\cameraEffect\CameraEffect.cs" />
+     <Compile Include="Assets\Scripts\lib\crc\CRC32.cs" />
+     <Compile Include="Assets\Scripts\lib\effect\gradient\Gradient.cs" />
+     <Compile Include="Assets\Scripts\lib\effect\lightningMove\LightningMove.cs" />
+     <Compile Include="Assets\Scripts\lib\gameObjectFactory\GameObjectControl.cs" />
+     <Compile Include="Assets\Scripts\lib\gameObjectFactory\GameObjectFactory.cs" />
+     <Compile Include="Assets\Scripts\lib\gameObjectFactory\GameObjectFactoryUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\gameObjectFactory\GameObjectTools.cs" />
+     <Compile Include="Assets\Scripts\lib\heroFactory\AnimationBehaviour.cs" />
+     <Compile Include="Assets\Scripts\lib\heroFactory\AnimationTrigger.cs" />
+     <Compile Include="Assets\Scripts\lib\modelEffect\ModelLightningMove.cs" />
+     <Compile Include="Assets\Scripts\lib\publicTools\ActorLightningUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\publicTools\ActorParabolaEffectUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\publicTools\ActorParabolaUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\publicTools\PublicTools.cs" />
+     <Compile Include="Assets\Scripts\lib\scene\LightmapGameObject.cs" />
+     <Compile Include="Assets\Scripts\lib\scene\Scene.cs" />
+     <Compile Include="Assets\Scripts\lib\scene\SceneContinue.cs" />
+     <Compile Include="Assets\Scripts\lib\scene\SceneContinueStart.cs" />
+     <Compile Include="Assets\Scripts\lib\scene\SceneData.cs" />
+     <Compile Include="Assets\Scripts\lib\superFunction\SuperEvent.cs" />
+     <Compile Include="Assets\Scripts\lib\superFunction\SuperFunction.cs" />
+     <Compile Include="Assets\Scripts\lib\superFunction\SuperFunctionOld.cs" />
+     <Compile Include="Assets\Scripts\lib\superFunction\SuperFunctionUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\superList\SuperList.cs" />
+     <Compile Include="Assets\Scripts\lib\superList\SuperListCell.cs" />
+     <Compile Include="Assets\Scripts\lib\superTween\SuperTween.cs" />
+     <Compile Include="Assets\Scripts\lib\superTween\SuperTweenScript.cs" />
+     <Compile Include="Assets\Scripts\lib\superTween\SuperTweenUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\systemIO\SystemIO.cs" />
+     <Compile Include="Assets\Scripts\lib\textureFactory\TextureFactory.cs" />
+     <Compile Include="Assets\Scripts\lib\textureFactory\TextureFactoryUnit.cs" />
+     <Compile Include="Assets\Scripts\lib\textureFactory\TextureFactoryUnitBase.cs" />
+     <Compile Include="Assets\Scripts\lib\uiParticleFix\UIParticleContainerFix.cs" />
+     <Compile Include="Assets\Scripts\lib\versionControl\VersionControl.cs" />
+     <Compile Include="Assets\Scripts\lib\versionControl\VersoinData.cs" />
+     <Compile Include="Assets\Scripts\lib\wwwManager\WWWManager.cs" />
+     <Compile Include="Assets\Scripts\lib\wwwManager\WWWManagerScript.cs" />
+     <None Include="Assets\Scripts\lib\shader\WeaponWithLightningMove.shader" />
+     <None Include="Assets\Scripts\lib\shader\Weapon.shader" />
+     <None Include="Assets\Scripts\lib\shader\ParticleAdditive_1.shader" />
+     <None Include="Assets\Scripts\lib\shader\BattleHeroDamagePass.shader" />
+     <None Include="Assets\Scripts\lib\shader\UI_Transparent_2.shader" />
+     <None Include="Assets\Scripts\lib\shader\SimpleShader.shader" />
+     <None Include="Assets\Scripts\lib\SRDebugger\README.txt" />
+     <None Include="Assets\Scripts\lib\shader\BattleSkillIconPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\BattleHeroShadowPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\BattleHeroHpPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\UIParticleAdditiveBillBoard.shader" />
+     <None Include="Assets\Scripts\lib\SRDebugger\UI\Fonts\FONT LICENSE.txt" />
+     <None Include="Assets\Scripts\lib\shader\ImageGrayShader.shader" />
+     <None Include="Assets\Scripts\lib\shader\UIParticleAdditiveMesh.shader" />
+     <None Include="Assets\Scripts\lib\shader\SimpleColorShader.shader" />
+     <None Include="Assets\Scripts\lib\shader\Font_Transparent_2.shader" />
+     <None Include="Assets\Scripts\lib\shader\Hero.shader" />
+     <None Include="Assets\Scripts\lib\shader\UILightningMove.shader" />
+     <None Include="Assets\Scripts\lib\shader\BattleSpeedPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\RadiosBlur.shader" />
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Networking">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Analytics">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+ <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>

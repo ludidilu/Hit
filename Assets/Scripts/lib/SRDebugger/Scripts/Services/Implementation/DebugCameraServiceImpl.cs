@@ -1,0 +1,40 @@
+﻿using SRF;
+using SRF.Service;
+using UnityEngine;
+
+namespace SRDebugger.Services.Implementation
+{
+
+	[Service(typeof(IDebugCameraService))]
+	public class DebugCameraServiceImpl : IDebugCameraService
+	{
+
+		public Camera Camera
+		{
+			get { return _debugCamera; }
+		}
+
+		private Camera _debugCamera;
+
+		public DebugCameraServiceImpl()
+		{
+
+			if (Settings.Instance.UseDebugCamera) {
+
+				_debugCamera = new GameObject("SRDebugCamera").AddComponent<Camera>();
+
+				_debugCamera.cullingMask = 1 << Settings.Instance.DebugLayer;
+				_debugCamera.depth = Settings.Instance.DebugCameraDepth;
+
+				_debugCamera.clearFlags = CameraClearFlags.Depth;
+
+				_debugCamera.transform.SetParent(Hierarchy.Get("SRDebugger"));
+
+			}
+
+
+		}
+
+	}
+
+}

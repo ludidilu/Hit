@@ -47,7 +47,10 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Main.cs" />
      <Compile Include="Assets\Scripts\battle\Bar.cs" />
+     <Compile Include="Assets\Scripts\battle\BattleAI.cs" />
      <Compile Include="Assets\Scripts\battle\BattleControl.cs" />
+     <Compile Include="Assets\Scripts\csv\HitCsv.cs" />
+     <Compile Include="Assets\Scripts\csv\NpcCsv.cs" />
      <Compile Include="Assets\Scripts\csv\SkillCsv.cs" />
      <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\AutoInitialize.cs" />
      <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Internal\Api.cs" />

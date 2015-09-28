@@ -2,100 +2,181 @@
 using System.Collections;
 using xy3d.tstd.lib.superTween;
 using System;
+using System.Collections.Generic;
+using xy3d.tstd.lib.csv;
+using UnityEngine.UI;
 
 public class BattleControl : MonoBehaviour{
 
-	private bool isMoving;
+	private static int MAX_HP = 2000;
+
+	private static int MAX_COMBO = 5;
+
+	private int isMoving = 0;
+
 	private float barContainerWidth;
 
-	private GameObject barContainer1;
-	private GameObject barContainer2;
+	private NpcCsv[] npcCsv;
 
-	private GameObject bar1;
-	private GameObject bar2;
+	private Bar[] barContainer;
 
-	private float percent1;
-	private float percent2;
+	private Text[] hpText;
 
-	private float speed1 = 1;
-	private float speed2 = 1;
+	private Text[] comboText;
 
-	private int hittedIndex1 = -1;
-	private int hittedIndex2 = -1;
+	private float[] percent;
 
-	private int state1;
-	private int state2;
+	private float[] speed;
 
-	public void Init(GameObject _barContainer1,GameObject _barContainer2){
+	private int[] hittedIndex;
 
-		barContainerWidth = (_barContainer1.transform as RectTransform).rect.width;
+	private int[] state;
 
-		barContainer1 = _barContainer1;
-		barContainer2 = _barContainer2;
+	private int[] combo;
 
-		bar1 = barContainer1.GetComponent<Bar> ().bar;
-		bar2 = barContainer2.GetComponent<Bar> ().bar;
+	private int[] hp;
+
+	public void Init(GameObject[] _barContainer,GameObject[] _hpText,GameObject[] _comboText,int[] _npcID){
+
+		barContainerWidth = (_barContainer[0].transform as RectTransform).rect.width;
+
+		barContainer = new Bar[_barContainer.Length];
+		
+		npcCsv = new NpcCsv[barContainer.Length];
+
+		hpText = new Text[barContainer.Length];
+
+		comboText = new Text[barContainer.Length];
+
+		percent = new float[barContainer.Length];
+		
+		speed = new float[barContainer.Length];
+
+		hittedIndex = new int[barContainer.Length];
+
+		state = new int[barContainer.Length];
+
+		combo = new int[barContainer.Length];
+
+		hp = new int[barContainer.Length];
+
+		for (int i = 0; i < barContainer.Length; i++) {
+
+			barContainer [i] = _barContainer [i].GetComponent<Bar> ();
+
+			hpText[i] = _hpText[i].GetComponent<Text>();
+
+			hpText[i].text = MAX_HP.ToString();
+
+			comboText[i] = _comboText[i].GetComponent<Text>();
+
+			comboText[i].text = "0";
+
+			percent[i] = 0;
+
+			speed[i] = 1;
+
+			hittedIndex[i] = -1;
+
+			state[i] = -1;
+
+			npcCsv[i] = StaticData.GetData<NpcCsv>(_npcID[i]);
+
+			combo[i] = 0;
+
+			hp[i] = npcCsv[i].hp;
+		}
 	}
 
 	public void StartMove(){
 
-		percent1 = 0;
-		percent2 = 0;
-
-		isMoving = true;
+		isMoving++;
 	}
 
 	public void PauseMove(){
 
-		isMoving = false;
+		isMoving--;
 	}
 
 	public void ResumeMove(){
 
-		isMoving = true;
+		isMoving++;
 	}
 
-	public void SetSpeed1(float _speed){
+	public void SetSpeed(int _index,float _speed){
 
-		speed1 = _speed;
+		speed [_index] = _speed;
 
-		barContainer1.GetComponent<Bar> ().SetScale (speed1);
+		barContainer [_index].SetScale (_speed);
 	}
 
-	public void SetSpeed2(float _speed){
-		
-		speed2 = _speed;
-		
-		barContainer2.GetComponent<Bar> ().SetScale (speed2);
+	public void CastSkill(int _index,int _skillID){
+
+		if (state [_index] == 0) {
+			
+			if (combo [_index] < MAX_COMBO) {
+				
+				ComboChange (_index, combo [_index] + 1);
+			}
+		}
+
+		barContainer [_index].Init (_skillID);
+
+		state [_index] = barContainer [_index].csv.type [0];
+
+		percent [_index] = 0;
+
+		hittedIndex [_index] = -1;
 	}
 
 	void Update(){
 
-		if (isMoving) {
+		if (isMoving > 0) {
 
 			float deltaTime = Time.deltaTime;
 
-			int hitIndex1 = -1;
-			float hitTime1 = 0;
+			List<int> hitReal = new List<int>();
+			List<int> hitIndex = new List<int>();
+			
+			float max = float.MaxValue;
 
-			int hitIndex2 = -1;
-			float hitTime2 = 0;
+			for(int i = 0 ; i < barContainer.Length ; i++){
 
-			if(barContainer1.GetComponent<Bar>().csv != null){
+				if(state[i] != -1){
+					
+					SkillCsv csv = barContainer[i].csv;
+					
+					float addPercent = deltaTime / csv.allTime * speed[i];
+					
+					for(int m = hittedIndex[i] + 1 ; m < csv.hitTime.Length ; m++){
 
-				SkillCsv csv = barContainer1.GetComponent<Bar>().csv;
-				
-				float addPercent = deltaTime / csv.allTime * speed1;
+						float tmp = csv.hitTime[m] / csv.allTime;
 
-				for(int i = hittedIndex1 + 1 ; i < csv.hitTime.Length ; i++){
+						if(tmp > percent[i]){
+							
+							if(tmp <= percent[i] + addPercent){
 
-					if(csv.hitTime[i] / csv.allTime > percent1){
-						
-						if(csv.hitTime[i] / csv.allTime <= percent1 + addPercent){
+								float tmpHitTime = (percent[i] + addPercent - csv.hitTime[m] / csv.allTime) * csv.allTime * speed[i];
 
-							hitIndex1 = i;
+								if(tmpHitTime < max){
+									
+									hitReal.Clear();
 
-							hitTime1 = (percent1 + addPercent - csv.hitTime[i] / csv.allTime) * csv.allTime * speed1;
+									hitIndex.Clear();
+									
+									hitReal.Add(i);
+
+									hitIndex.Add(m);
+									
+									max = tmpHitTime;
+									
+								}else if(tmpHitTime == max){
+									
+									hitReal.Add(i);
+
+									hitIndex.Add(m);
+								}
+							}
 
 							break;
 						}
@@ -103,183 +184,180 @@ public class BattleControl : MonoBehaviour{
 				}
 			}
 
-			if(barContainer2.GetComponent<Bar>().csv != null){
+			if(hitReal.Count > 0){
+
+				SkillCsv csv = barContainer[hitReal[0]].csv;
 				
-				SkillCsv csv = barContainer2.GetComponent<Bar>().csv;
-				
-				float addPercent = deltaTime / csv.allTime * speed2;
-				
-				for(int i = hittedIndex2 + 1 ; i < csv.hitTime.Length ; i++){
+				deltaTime = (csv.hitTime[hitIndex[0]] / csv.allTime - percent[hitReal[0]]) * csv.allTime * speed[hitReal[0]];
+			}
+
+			for(int i = 0 ; i < barContainer.Length ; i++){
+
+				if(state[i] != -1){
 					
-					if(csv.hitTime[i] / csv.allTime > percent2){
-						
-						if(csv.hitTime[i] / csv.allTime <= percent2 + addPercent){
+					SkillCsv csv = barContainer[i].csv;
+					
+					float addPercent = deltaTime / csv.allTime * speed[i];
+					
+					float tt = 0;
+					
+					bool isOver = false;
+					
+					for(int m = 0 ; m < csv.time.Length ; m++){
+
+						float tmp = (tt + csv.time[m]) / csv.allTime;
+
+						if(tmp >= percent[i]){
 							
-							hitIndex2 = i;
-							
-							hitTime2 = (percent2 + addPercent - csv.hitTime[i] / csv.allTime) * csv.allTime * speed2;
+							if(tmp < percent[i] + addPercent){
+								
+								if(m < csv.time.Length - 1){
+
+									state[i] = csv.type[m + 1];
+
+								}else{
+									
+									isOver = true;
+								}
+							}
 							
 							break;
 						}
+						
+						tt = tt + csv.time[m];
+					}
+
+					if(!isOver){
+						
+						percent[i] = percent[i] + addPercent;
+						
+						(barContainer[i].bar.transform as RectTransform).anchoredPosition = new Vector2((barContainer[i].bar.transform as RectTransform).anchoredPosition.x - deltaTime / Bar.MAX_TIME * barContainerWidth,(barContainer[i].bar.transform as RectTransform).anchoredPosition.y);
+						
+					}else{
+
+						SkillOver(i);
 					}
 				}
 			}
 
-			if(hitIndex1 != -1 && hitIndex2 != -1){
+			if(hitReal.Count > 0){
 
-				if(hitTime1 < hitTime2){
+				PauseMove();
 
-					hitIndex2 = -1;
+				SuperTween.Instance.DelayCall(2,ResumeMove);
 
-					SkillCsv csv = barContainer1.GetComponent<Bar>().csv;
+				for(int i = 0 ; i < hitReal.Count ; i++){
 
-					deltaTime = (csv.hitTime[hitIndex1] / csv.allTime - percent1) * csv.allTime * speed1;
+					SkillCsv csv = barContainer[hitReal[i]].csv;
 
-				}else if(hitTime1 > hitTime2){
+					hittedIndex[hitReal[i]] = hitIndex[i];
 
-					hitIndex1 = -1;
-
-					SkillCsv csv = barContainer2.GetComponent<Bar>().csv;
-					
-					deltaTime = (csv.hitTime[hitIndex2] / csv.allTime - percent2) * csv.allTime * speed2;
-
-				}else{
-
-					SkillCsv csv = barContainer1.GetComponent<Bar>().csv;
-					
-					deltaTime = (csv.hitTime[hitIndex1] / csv.allTime - percent1) * csv.allTime * speed1;
+					Hit(hitReal[i],csv.hitID[hitIndex[i]]);
 				}
-
-			}else if(hitIndex1 != -1){
-
-				SkillCsv csv = barContainer1.GetComponent<Bar>().csv;
-				
-				deltaTime = (csv.hitTime[hitIndex1] / csv.allTime - percent1) * csv.allTime * speed1;
-
-			}else if(hitIndex2 != -1){
-
-				SkillCsv csv = barContainer2.GetComponent<Bar>().csv;
-				
-				deltaTime = (csv.hitTime[hitIndex2] / csv.allTime - percent2) * csv.allTime * speed2;
 			}
 
-			if(barContainer1.GetComponent<Bar>().csv != null){
+			if(state[1] == 0 || state[1] == -1){
 
-				SkillCsv csv = barContainer1.GetComponent<Bar>().csv;
+				if(Input.GetKeyDown(KeyCode.Alpha1)){
 
-				float addPercent = deltaTime / csv.allTime * speed1;
+					CastSkill(1,npcCsv[1].skill[0]);
 
-				float tt = 0;
+				}else if(Input.GetKeyDown(KeyCode.Alpha2)){
+					
+					CastSkill(1,npcCsv[1].skill[1]);
+					
+				}else if(Input.GetKeyDown(KeyCode.Alpha3)){
+					
+					CastSkill(1,npcCsv[1].skill[2]);
+					
+				}else if(Input.GetKeyDown(KeyCode.Alpha4)){
+					
+					CastSkill(1,npcCsv[1].skill[3]);
+				}
+			}
 
-				bool isOver = false;
+			if(state[0] == 0 || state[0] == -1){
 
-				for(int i = 0 ; i < csv.time.Length ; i++){
+				int skillID = AiCastSkill(0);
 
-					if((tt + csv.time[i]) / csv.allTime > percent1){
+				if(skillID != -1){
 
-						if((tt + csv.time[i]) / csv.allTime <= percent1 + addPercent){
+					CastSkill(0,skillID);
+				}
+			}
+		}
+	}
 
-							if(i < csv.time.Length - 1){
+	private void SkillOver(int _index){
 
-								state1 = csv.type[i + 1];
+		state[_index] = -1;
+		
+		barContainer[_index].Clear();
+		
+		ComboChange (_index, 0);
+	}
 
-							}else{
+	private void HpChange(int _index,int _change){
 
-								isOver = true;
-							}
+		hp [_index] = hp [_index] + _change;
+
+		hpText [_index].text = hp [_index].ToString ();
+
+		
+		if(hp[_index] < 1){
+			
+			PauseMove();
+		}
+	}
+
+	private void ComboChange(int _index,int _change){
+
+		combo [_index] = _change;
+		
+		comboText [_index].text = combo [_index].ToString ();
+	}
+
+	private void Hit(int _index,int _hitID){
+
+		HitCsv csv = StaticData.GetData<HitCsv> (_hitID);
+
+		for(int i = 0 ; i < csv.type.Length ; i++){
+
+			switch(csv.type[i]){
+
+			case 0:
+
+				for(int m = 0 ; m < barContainer.Length ; m++){
+
+					if(m != _index){
+
+						int damage = (int)(csv.data[i] * (1 + combo[_index] * 0.4f));
+
+						if(state[m] == 2){
+
+							damage = damage * 2;
+
+							SkillOver(m);
 						}
 
-						break;
+						HpChange(m,-damage);
 					}
-
-					tt = tt + csv.time[i];
 				}
 
-				if(!isOver){
-
-					percent1 = percent1 + addPercent;
-
-					(bar1.transform as RectTransform).anchoredPosition = new Vector2((bar1.transform as RectTransform).anchoredPosition.x - deltaTime / Bar.MAX_TIME * barContainerWidth,(bar1.transform as RectTransform).anchoredPosition.y);
-
-				}else{
-
-					hittedIndex1 = -1;
-
-					barContainer1.GetComponent<Bar>().Clear();
-				}
+				break;
 			}
+		}
+	}
 
-			if(barContainer2.GetComponent<Bar>().csv != null){
-				
-				SkillCsv csv = barContainer2.GetComponent<Bar>().csv;
-				
-				float addPercent = deltaTime / csv.allTime * speed2;
-				
-				float tt = 0;
-				
-				bool isOver = false;
-				
-				for(int i = 0 ; i < csv.time.Length ; i++){
-					
-					if((tt + csv.time[i]) / csv.allTime > percent2){
-						
-						if((tt + csv.time[i]) / csv.allTime <= percent2 + addPercent){
-							
-							if(i < csv.time.Length - 1){
-								
-								state2 = csv.type[i + 1];
-								
-							}else{
-								
-								isOver = true;
-							}
-						}
-						
-						break;
-					}
-					
-					tt = tt + csv.time[i];
-				}
-				
-				if(!isOver){
-					
-					percent2 = percent2 + addPercent;
-					
-					(bar2.transform as RectTransform).anchoredPosition = new Vector2((bar2.transform as RectTransform).anchoredPosition.x - deltaTime / Bar.MAX_TIME * barContainerWidth,(bar2.transform as RectTransform).anchoredPosition.y);
-					
-				}else{
-
-					hittedIndex2 = -1;
-					
-					barContainer2.GetComponent<Bar>().Clear();
-				}
-			}
-
-			if(hitIndex1 != -1 && hitIndex2 != -1){
-
-				hittedIndex1 = hitIndex1;
-				hittedIndex2 = hitIndex2;
-
-				PauseMove();
-
-				SuperTween.Instance.DelayCall(2,ResumeMove);
-
-			}else if(hitIndex1 != -1){
-
-				hittedIndex1 = hitIndex1;
-
-				PauseMove();
-				
-				SuperTween.Instance.DelayCall(2,ResumeMove);
-
-			}else if(hitIndex2 != -1){
-
-				hittedIndex2 = hitIndex2;
-
-				PauseMove();
-				
-				SuperTween.Instance.DelayCall(2,ResumeMove);
-			}
+	public int AiCastSkill(int _index){
+		
+		if (UnityEngine.Random.Range (0, npcCsv[_index].level) < 1) {
+			
+			return npcCsv[_index].skill [(int)(npcCsv[_index].skill.Length * UnityEngine.Random.value)];
+			
+		} else {
+			
+			return -1;
 		}
 	}
 }

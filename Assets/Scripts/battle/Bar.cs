@@ -12,7 +12,7 @@ public class Bar : MonoBehaviour {
 
 	[HideInInspector]public SkillCsv csv;
 
-	private GameObject[] hits;
+	private GameObject[] hits = new GameObject[0];
 
 	// Use this for initialization
 	void Start () {

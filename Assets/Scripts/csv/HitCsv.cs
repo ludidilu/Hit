@@ -4,6 +4,7 @@ using System.Collections;
 [System.Serializable]
 public class HitCsv : CsvBase {
 
-	public int[] type;
-	public int[] data;
+	public int damage;
+	public int[] buff;
+	public float[] buffTime;
 }

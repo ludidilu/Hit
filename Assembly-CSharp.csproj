@@ -46,9 +46,14 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Main.cs" />
-     <Compile Include="Assets\Scripts\battle\Bar.cs" />
+     <Compile Include="Assets\Scripts\battle\BarContainer.cs" />
      <Compile Include="Assets\Scripts\battle\BattleAI.cs" />
+     <Compile Include="Assets\Scripts\battle\BattleBuff.cs" />
+     <Compile Include="Assets\Scripts\battle\BattleConstData.cs" />
      <Compile Include="Assets\Scripts\battle\BattleControl.cs" />
+     <Compile Include="Assets\Scripts\battle\BattlePlayer.cs" />
+     <Compile Include="Assets\Scripts\battle\HeroContainer.cs" />
+     <Compile Include="Assets\Scripts\csv\BuffCsv.cs" />
      <Compile Include="Assets\Scripts\csv\HitCsv.cs" />
      <Compile Include="Assets\Scripts\csv\NpcCsv.cs" />
      <Compile Include="Assets\Scripts\csv\SkillCsv.cs" />

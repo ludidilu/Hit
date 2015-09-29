@@ -2,25 +2,22 @@
 using System.Collections;
 using xy3d.tstd.lib.csv;
 
-public class BattleAI{
+public class BattleAI : MonoBehaviour{
 
-	private NpcCsv csv;
+	public HeroContainer heroContainer;
 
-	public void Init(int _id){
+	public BattleControl battleControl;
 
-		csv = StaticData.GetData<NpcCsv> (_id);
-	}
+	void Update(){
 
-	public int CastSkill(){
+		if(battleControl.isMoving > 0 && (heroContainer.state == 0 || heroContainer.state == -1)){
 
-		if (Random.Range (0, 120) < 1) {
+			if (UnityEngine.Random.Range (0, heroContainer.npcCsv.level) < 1) {
+				
+				int skillID = heroContainer.npcCsv.skill[(int)(heroContainer.npcCsv.skill.Length * UnityEngine.Random.value)];
 
-			return csv.skill [(int)(csv.skill.Length * Random.value)];
-
-		} else {
-
-			return -1;
+				heroContainer.CastSkill(skillID);
+			}
 		}
 	}
-
 }

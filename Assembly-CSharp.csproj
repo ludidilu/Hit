@@ -52,7 +52,9 @@
      <Compile Include="Assets\Scripts\battle\BattleConstData.cs" />
      <Compile Include="Assets\Scripts\battle\BattleControl.cs" />
      <Compile Include="Assets\Scripts\battle\BattlePlayer.cs" />
+     <Compile Include="Assets\Scripts\battle\BattlePlayerControl.cs" />
      <Compile Include="Assets\Scripts\battle\HeroContainer.cs" />
+     <Compile Include="Assets\Scripts\battle\MyHeroContainer.cs" />
      <Compile Include="Assets\Scripts\csv\BuffCsv.cs" />
      <Compile Include="Assets\Scripts\csv\HitCsv.cs" />
      <Compile Include="Assets\Scripts\csv\NpcCsv.cs" />

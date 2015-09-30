@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using xy3d.tstd.lib.csv;
+using xy3d.tstd.lib.superFunction;
 
 public class BattleBuff : MonoBehaviour {
 
@@ -45,8 +46,26 @@ public class BattleBuff : MonoBehaviour {
 
 		case 1:
 
-			heroContainer.SetSpeed(0.5f);
+			heroContainer.SetSpeed(BattleConstData.SLOW_VALUE);
 
+			break;
+
+		case 2:
+
+			heroContainer.SetSilent(true);
+
+			break;
+
+		case 3:
+
+			heroContainer.SetBlood(true);
+
+			break;
+
+		case 4:
+			
+			heroContainer.SetDamageFix(BattleConstData.CRACK_VALUE);
+			
 			break;
 		}
 	}
@@ -57,9 +76,27 @@ public class BattleBuff : MonoBehaviour {
 			
 		case 1:
 
-			_deltaTime = buffTime * 0.5f + (_deltaTime - buffTime);
+			_deltaTime = buffTime * BattleConstData.SLOW_VALUE + (_deltaTime - buffTime);
 
 			heroContainer.SetSpeed(1);
+			
+			break;
+
+		case 2:
+			
+			heroContainer.SetSilent(false);
+			
+			break;
+
+		case 3:
+			
+			heroContainer.SetBlood(false);
+			
+			break;
+
+		case 4:
+			
+			heroContainer.SetDamageFix(1);
 			
 			break;
 		}

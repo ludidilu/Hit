@@ -1,0 +1,76 @@
+##############################################################################
+#                                   Xcode                                    #
+##############################################################################
+build/**/build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.xcuserstate
+
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+ProjectSettings/
+Obj/
+UnityGenerated/
+Library/
+Assets/AssetStoreTools*
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+###########
+#  OTHER  #
+###########
+Assets/Vectrosity 3/
+Assets/Vectrosity 4/
+Assets/Vectrosity/Demos/
+Assets/Plugins/VectrosityDemos/
+Assets/TextMesh Pro/Examples/
+Assets/PlayGround/
+/Assets/UnityVS
+/UnityVS.tstd_client.CSharp.Editor.csproj
+/UnityVS.tstd_client.sln
+/UnityVS.tstd_client.CSharp.csproj
+/Assets/UnityVS.meta
+/Assets/Arts/2D.meta
+/Assets/Arts/_Scence.meta
+/Assets/Arts/effect/fbx/Materials/t_shinebar_002.mat
+/Assets/Arts/effect/fbx/Materials/t_shinebar_002.mat.meta
+/Assets/Arts/ui/UICommonTextures/Materials.meta
+/Assets/Arts/ui/UICommonTextures/Materials/No Name.mat
+/Assets/Arts/ui/UICommonTextures/Materials/No Name.mat.meta
+/Assets/StreamingAssets/local.xml
+/Assets/StreamingAssets/local.xml.meta

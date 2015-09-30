@@ -12,11 +12,11 @@ public class Main : MonoBehaviour {
 		StaticData.Load<HitCsv> ("hit");
 		StaticData.Load<BuffCsv> ("buff");
 
-		GameObject g1 = GameObject.Find ("HeroContainer1");
+		GameObject g1 = GameObject.Find ("OppContainer");
 //
 //		g1.GetComponent<Bar> ().Init (1);
 
-		GameObject g2 = GameObject.Find ("HeroContainer2");
+		GameObject g2 = GameObject.Find ("MyContainer");
 
 //		g2.GetComponent<Bar> ().Init (2);
 

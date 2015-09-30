@@ -51,12 +51,12 @@ public class BattleControl : MonoBehaviour{
 
 		if(Input.GetKeyDown(KeyCode.A)){
 
-			barContainer[0].AddBuff(1,3);
+			barContainer[1].AddBuff(1,3);
 		}
 
 		if(Input.GetKeyDown(KeyCode.B)){
 			
-			barContainer[0].AddBuff(2,4);
+			barContainer[1].AddBuff(2,4);
 		}
 
 		if (isMoving > 0) {
@@ -92,32 +92,24 @@ public class BattleControl : MonoBehaviour{
 		}
 	}
 
-	private void SkillOver(int _index){
-
-		barContainer [_index].SkillOver ();
-	}
-
-	private void HpChange(int _index,int _change){
-
-		barContainer [_index].HpChange (_change);
-	}
-
-	public void Hit(int _index,HitCsv _csv){
+	public void BeDamage(int _index,int _damage){
 
 		for(int m = 0 ; m < barContainer.Length ; m++){
 
 			if(m != _index){
 
-				int damage = (int)(_csv.damage * (1 + barContainer[_index].combo * 0.4f));
+				barContainer [m].BeDamage(_damage);
+			}
+		}
+	}
 
-				if(barContainer[m].state == 2){
+	public void AddBuff(int _index,int _buffID,float _buffTime){
 
-					damage = damage * 2;
-
-					SkillOver(m);
-				}
-
-				HpChange(m,-damage);
+		for(int m = 0 ; m < barContainer.Length ; m++){
+			
+			if(m != _index){
+				
+				barContainer [m].AddBuff(_buffID,_buffTime);
 			}
 		}
 	}

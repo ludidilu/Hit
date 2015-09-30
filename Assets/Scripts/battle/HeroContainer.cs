@@ -12,9 +12,9 @@ public class HeroContainer : MonoBehaviour {
 
 	private int index;
 
-	public GameObject maskContainer;
+	public RectTransform maskRectTransform;
 
-	public GameObject buffContainer;
+	public RectTransform buffRectTransform;
 
 	public BarContainer bar;
 
@@ -28,7 +28,13 @@ public class HeroContainer : MonoBehaviour {
 
 	private float speed;
 
+	[HideInInspector]public bool isSilent;
+
+	private bool isBlood;
+
 	private int hittedIndex;
+
+	private float damageFix;
 
 	[HideInInspector]public int state;
 
@@ -38,9 +44,9 @@ public class HeroContainer : MonoBehaviour {
 
 	[HideInInspector]public SkillCsv csv;
 
-	private Dictionary<int, BattleBuff> buffDic = new Dictionary<int, BattleBuff> ();
+	protected Dictionary<int, BattleBuff> buffDic = new Dictionary<int, BattleBuff> ();
 
-	private List<GameObject> buffList = new List<GameObject> ();
+	protected List<GameObject> buffList = new List<GameObject> ();
 
 	public void Init(BattleControl _battleControl,int _index,int _npcID){
 
@@ -51,10 +57,15 @@ public class HeroContainer : MonoBehaviour {
 		npcCsv = StaticData.GetData<NpcCsv> (_npcID);
 
 		percent = 0;
-		speed = 1;
+
 		hittedIndex = -1;
-		state = -1;
-		
+
+		SetSpeed (1);
+		SetSilent (false);
+		SetBlood (false);
+		SetState (-1);
+		SetDamageFix (1);
+
 		SetCombo (0);
 		SetHp (npcCsv.hp);
 	}
@@ -62,11 +73,8 @@ public class HeroContainer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		(maskContainer.transform as RectTransform).offsetMax = new Vector2((transform as RectTransform).rect.width,0);
-		(maskContainer.transform as RectTransform).offsetMin = new Vector2(0,-(transform as RectTransform).rect.height);
-
-		(bar.transform as RectTransform).offsetMax = new Vector2((transform as RectTransform).rect.width,0);
-		(bar.transform as RectTransform).offsetMin = new Vector2(0,-(transform as RectTransform).rect.height);
+		maskRectTransform.offsetMax = new Vector2((transform as RectTransform).rect.width,0);
+		maskRectTransform.offsetMin = new Vector2(0,-(transform as RectTransform).rect.height);
 	}
 
 	private void SetCombo(int _value){
@@ -97,20 +105,27 @@ public class HeroContainer : MonoBehaviour {
 
 		bar.Init ();
 
-		state = csv.type [0];
-		
+		SetState (csv.type [0]);
+
 		percent = 0;
 		
 		hittedIndex = -1;
 	}
 
-	public void HpChange(int _value){
+	public void BeDamage(int _value){
 
-		SetHp (hp + _value);
+		SetHp (hp - (int)(_value * damageFix));
 
-		if(hp < 1){
+		if (hp < 1) {
 			
-			battleControl.PauseMove();
+			battleControl.PauseMove ();
+
+		} else {
+
+			if(state == 2){
+
+				SkillOver();
+			}
 		}
 	}
 
@@ -121,15 +136,35 @@ public class HeroContainer : MonoBehaviour {
 		bar.SetScale (1 / _speed);
 	}
 
-	public void SkillOver(){
+	public void SetSilent(bool _b){
+
+		isSilent = _b;
+	}
+
+	public void SetBlood(bool _b){
 		
-		state = -1;
+		isBlood = _b;
+	}
+
+	public void SetDamageFix(float _value){
+
+		damageFix = _value;
+	}
+
+	private void SkillOver(){
+		
+		SetState (-1);
 
 		SetCombo (0);
 
 		csv = null;
 		
 		bar.Clear ();
+	}
+
+	private void SetState(int _state){
+
+		state = _state;
 	}
 
 	public void GetHit(ref float _deltaTime,ref float _max,List<int> _hitReal,List<int> _hitIndex){
@@ -209,9 +244,9 @@ public class HeroContainer : MonoBehaviour {
 					if(tmp < percent + addPercent){
 						
 						if(m < csv.time.Length - 1){
-							
-							state = csv.type[m + 1];
-							
+
+							SetState (csv.type[m + 1]);
+
 						}else{
 							
 							isOver = true;
@@ -227,8 +262,10 @@ public class HeroContainer : MonoBehaviour {
 			if(!isOver){
 				
 				percent = percent + addPercent;
-				
-				(bar.transform as RectTransform).anchoredPosition = new Vector2((bar.transform as RectTransform).anchoredPosition.x - _deltaTime / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width,(bar.transform as RectTransform).anchoredPosition.y);
+
+				bar.Move(_deltaTime);
+
+//				(bar.transform as RectTransform).anchoredPosition = new Vector2((bar.transform as RectTransform).anchoredPosition.x - _deltaTime / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width,(bar.transform as RectTransform).anchoredPosition.y);
 				
 			}else{
 				
@@ -239,14 +276,26 @@ public class HeroContainer : MonoBehaviour {
 
 	public void Hit(int _index){
 
+		if (isBlood) {
+
+			BeDamage((int)(hp * BattleConstData.BLOOD_VALUE));
+		}
+
 		hittedIndex = _index;
 
 		HitCsv hitCsv = StaticData.GetData<HitCsv> (csv.hitID[hittedIndex]);
-		
-		battleControl.Hit (index, hitCsv);
+
+		float fix = 1 + (combo * BattleConstData.COMBO_VALUE);
+
+		battleControl.BeDamage (index, (int)(hitCsv.damage * fix));
+
+		for (int i = 0; i < hitCsv.buff.Length; i++) {
+
+			battleControl.AddBuff(index,hitCsv.buff[i],hitCsv.buffTime[i]);
+		}
 	}
 
-	public void AddBuff(int _buffID,float _buffTime){
+	public virtual void AddBuff(int _buffID,float _buffTime){
 
 		if (buffDic.ContainsKey (_buffID)) {
 
@@ -262,7 +311,7 @@ public class HeroContainer : MonoBehaviour {
 			
 			buff.Init (this, _buffID, _buffTime);
 
-			go.transform.SetParent(buffContainer.transform,false);
+			go.transform.SetParent(buffRectTransform,false);
 
 			(go.transform as RectTransform).anchoredPosition = new Vector2((go.transform as RectTransform).anchoredPosition.x,-buffDic.Count * (go.transform as RectTransform).rect.height);
 
@@ -272,7 +321,7 @@ public class HeroContainer : MonoBehaviour {
 		}
 	}
 
-	private void RemoveBuff(int _buffID){
+	public virtual void RemoveBuff(int _buffID){
 
 		GameObject go = buffDic [_buffID].gameObject;
 

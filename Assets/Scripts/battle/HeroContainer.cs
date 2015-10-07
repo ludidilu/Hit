@@ -18,6 +18,8 @@ public class HeroContainer : MonoBehaviour {
 
 	public BarContainer bar;
 
+	public HitContainer hitContainer;
+
 	public Text hpText;
 
 	public Text comboText;
@@ -26,7 +28,7 @@ public class HeroContainer : MonoBehaviour {
 
 	private float percent;
 
-	private float speed;
+	[HideInInspector]public float speed;
 
 	[HideInInspector]public bool isSilent;
 
@@ -105,6 +107,8 @@ public class HeroContainer : MonoBehaviour {
 
 		bar.Init ();
 
+		hitContainer.Init ();
+
 		SetState (csv.type [0]);
 
 		percent = 0;
@@ -119,13 +123,14 @@ public class HeroContainer : MonoBehaviour {
 		if (hp < 1) {
 			
 			battleControl.PauseMove ();
+		}
+	}
 
-		} else {
+	public void BeInterrupt(){
 
-			if(state == 2){
-
-				SkillOver();
-			}
+		if(state == 2){
+			
+			SkillOver();
 		}
 	}
 
@@ -133,7 +138,9 @@ public class HeroContainer : MonoBehaviour {
 
 		speed = _speed;
 
-		bar.SetScale (1 / _speed);
+		bar.SetScale ();
+
+		hitContainer.SetScale ();
 	}
 
 	public void SetSilent(bool _b){
@@ -160,6 +167,8 @@ public class HeroContainer : MonoBehaviour {
 		csv = null;
 		
 		bar.Clear ();
+
+		hitContainer.Clear ();
 	}
 
 	private void SetState(int _state){
@@ -265,6 +274,8 @@ public class HeroContainer : MonoBehaviour {
 
 				bar.Move(_deltaTime);
 
+				hitContainer.Move(_deltaTime);
+
 //				(bar.transform as RectTransform).anchoredPosition = new Vector2((bar.transform as RectTransform).anchoredPosition.x - _deltaTime / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width,(bar.transform as RectTransform).anchoredPosition.y);
 				
 			}else{
@@ -289,10 +300,20 @@ public class HeroContainer : MonoBehaviour {
 
 		battleControl.BeDamage (index, (int)(hitCsv.damage * fix));
 
+		if (hitCsv.interrupt) {
+
+			battleControl.BeInterrupt (index);
+		}
+
 		for (int i = 0; i < hitCsv.buff.Length; i++) {
 
 			battleControl.AddBuff(index,hitCsv.buff[i],hitCsv.buffTime[i]);
 		}
+	}
+
+	public void HitOver(){
+
+		hitContainer.HitOver ();
 	}
 
 	public virtual void AddBuff(int _buffID,float _buffTime){

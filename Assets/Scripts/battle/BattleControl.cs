@@ -82,12 +82,24 @@ public class BattleControl : MonoBehaviour{
 
 				PauseMove();
 
-				SuperTween.Instance.DelayCall(2,ResumeMove);
+
 
 				for(int i = 0 ; i < hitReal.Count ; i++){
 
 					barContainer[hitReal[i]].Hit(hitIndex[i]);
 				}
+
+				Action callBack = delegate() {
+
+					for(int i = 0 ; i < hitReal.Count ; i++){
+						
+						barContainer[hitReal[i]].HitOver();
+					}
+
+					ResumeMove();
+				};
+				
+				SuperTween.Instance.DelayCall(2,callBack);
 			}
 		}
 	}
@@ -99,6 +111,17 @@ public class BattleControl : MonoBehaviour{
 			if(m != _index){
 
 				barContainer [m].BeDamage(_damage);
+			}
+		}
+	}
+
+	public void BeInterrupt(int _index){
+		
+		for(int m = 0 ; m < barContainer.Length ; m++){
+			
+			if(m != _index){
+				
+				barContainer [m].BeInterrupt();
 			}
 		}
 	}

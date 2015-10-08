@@ -276,8 +276,6 @@ public class HeroContainer : MonoBehaviour {
 
 				hitContainer.Move(_deltaTime);
 
-//				(bar.transform as RectTransform).anchoredPosition = new Vector2((bar.transform as RectTransform).anchoredPosition.x - _deltaTime / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width,(bar.transform as RectTransform).anchoredPosition.y);
-				
 			}else{
 				
 				SkillOver();

@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using xy3d.tstd.lib.gameObjectFactory;
 
 public class BarContainer : BaseContainer {
-
-
 
 	public void Init(){
 		
@@ -15,20 +14,13 @@ public class BarContainer : BaseContainer {
 		float allWidth = 0;
 		
 		for (int i = 0; i < heroContainer.csv.time.Length; i++) {
+
+			GameObject unit = GameObjectFactory.Instance.GetGameObject("Assets/Prefabs/Bar.prefab", null, true);
+
+			Image img = unit.GetComponent<Image>();
 			
-			GameObject unit = new GameObject();
-			
-			unit.layer = gameObject.layer;
-			
-			Image img = unit.AddComponent<Image>();
-			
-			img.transform.SetParent(transform,false);
-			
-			img.rectTransform.anchorMax = new Vector2(0,1);
-			img.rectTransform.anchorMin = new Vector2(0,1);
-			
-			img.rectTransform.pivot = new Vector2(0,1);
-			
+			unit.transform.SetParent(transform,false);
+
 			float width = heroContainer.csv.time[i] / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width;
 			
 			img.rectTransform.offsetMax = new Vector2(width,0);
@@ -40,7 +32,7 @@ public class BarContainer : BaseContainer {
 			
 			img.color = BattleConstData.COLOR_ARR[heroContainer.csv.type[i]];
 			
-			img.raycastTarget = false;
+//			img.raycastTarget = false;
 		}
 	}
 

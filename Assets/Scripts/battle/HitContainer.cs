@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using xy3d.tstd.lib.csv;
+using xy3d.tstd.lib.gameObjectFactory;
+using xy3d.tstd.lib.textureFactory;
 
 public class HitContainer : BaseContainer {
 
@@ -17,37 +19,28 @@ public class HitContainer : BaseContainer {
 		for (int i = 0; i < heroContainer.csv.hitID.Length; i++) {
 
 			HitCsv csv = StaticData.GetData<HitCsv>(heroContainer.csv.hitID[i]);
+
+			GameObject unit = GameObjectFactory.Instance.GetGameObject("Assets/Prefabs/Hit.prefab", null, true);
 			
-			GameObject unit = new GameObject();
+			Image img = unit.GetComponent<Image>();
 			
-			unit.layer = gameObject.layer;
-			
-			Image img = unit.AddComponent<Image>();
-			
-			img.transform.SetParent(transform,false);
-			
-			img.rectTransform.anchorMax = new Vector2(0,1);
-			img.rectTransform.anchorMin = new Vector2(0,1);
-			
-			img.rectTransform.pivot = new Vector2(0.5f,1f);
-			
-			img.rectTransform.offsetMax = new Vector2(4,0);
+			unit.transform.SetParent(transform,false);
+
+			img.rectTransform.offsetMax = new Vector2(img.rectTransform.rect.width / img.rectTransform.rect.height * (transform as RectTransform).rect.height,0);
 			img.rectTransform.offsetMin = new Vector2(0,-(transform as RectTransform).rect.height);
 			
 			img.rectTransform.anchoredPosition = new Vector2(heroContainer.csv.hitTime[i] / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width,0);
 
 			if(csv.interrupt){
 
-				img.color = Color.black;
+				img.overrideSprite = TextureFactory.Instance.GetTexture<Sprite> ("Assets/Textures/cangtianyudijian.png", null, true);
 
 			}else{
 
-				img.color = Color.white;
+				img.overrideSprite = TextureFactory.Instance.GetTexture<Sprite> ("Assets/Textures/binghuangyanfengzhang.png", null, true);
 			}
-			
-			img.raycastTarget = false;
 
-			img.transform.localScale = new Vector3(heroContainer.speed,1,1);
+			unit.transform.localScale = new Vector3(heroContainer.speed,1,1);
 			
 			hits.Add(unit);
 		}

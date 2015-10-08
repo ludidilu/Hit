@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using xy3d.tstd.lib.csv;
 using UnityEngine.UI;
 using xy3d.tstd.lib.gameObjectFactory;
+using xy3d.tstd.lib.textureFactory;
 
 public class BattleControl : MonoBehaviour{
 
@@ -25,6 +26,14 @@ public class BattleControl : MonoBehaviour{
 		}
 
 		GameObjectFactory.Instance.GetGameObject ("Assets/Prefabs/Buff.prefab", null, false);
+
+		GameObjectFactory.Instance.GetGameObject ("Assets/Prefabs/Bar.prefab", null, false);
+
+		GameObjectFactory.Instance.GetGameObject ("Assets/Prefabs/Hit.prefab", null, false);
+
+		TextureFactory.Instance.GetTexture<Sprite> ("Assets/Textures/cangtianyudijian.png", null, false);
+
+		TextureFactory.Instance.GetTexture<Sprite> ("Assets/Textures/binghuangyanfengzhang.png", null, false);
 	}
 
 	public void StartMove(){

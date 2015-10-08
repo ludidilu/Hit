@@ -26,8 +26,8 @@ public class HitContainer : BaseContainer {
 			
 			unit.transform.SetParent(transform,false);
 
-			img.rectTransform.offsetMax = new Vector2(img.rectTransform.rect.width / img.rectTransform.rect.height * (transform as RectTransform).rect.height,0);
-			img.rectTransform.offsetMin = new Vector2(0,-(transform as RectTransform).rect.height);
+//			img.rectTransform.offsetMax = new Vector2(img.rectTransform.rect.width / img.rectTransform.rect.height * (transform as RectTransform).rect.height,0);
+//			img.rectTransform.offsetMin = new Vector2(0,-(transform as RectTransform).rect.height);
 			
 			img.rectTransform.anchoredPosition = new Vector2(heroContainer.csv.hitTime[i] / BattleConstData.MAX_TIME * (transform as RectTransform).rect.width,0);
 

@@ -40,7 +40,7 @@ public class HeroContainer : MonoBehaviour {
 
 	[HideInInspector]public int state;
 
-	[HideInInspector]public int combo;
+	private int combo;
 	
 	private int hp;
 
@@ -62,11 +62,12 @@ public class HeroContainer : MonoBehaviour {
 
 		hittedIndex = -1;
 
-		SetSpeed (1);
+		speed = 1;
+		damageFix = 1;
+
 		SetSilent (false);
 		SetBlood (false);
 		SetState (-1);
-		SetDamageFix (1);
 
 		SetCombo (0);
 		SetHp (npcCsv.hp);
@@ -136,7 +137,7 @@ public class HeroContainer : MonoBehaviour {
 
 	public void SetSpeed(float _speed){
 
-		speed = _speed;
+		speed *= _speed;
 
 		bar.SetScale ();
 
@@ -155,7 +156,7 @@ public class HeroContainer : MonoBehaviour {
 
 	public void SetDamageFix(float _value){
 
-		damageFix = _value;
+		damageFix *= _value;
 	}
 
 	private void SkillOver(){
@@ -305,7 +306,16 @@ public class HeroContainer : MonoBehaviour {
 
 		for (int i = 0; i < hitCsv.buff.Length; i++) {
 
-			battleControl.AddBuff(index,hitCsv.buff[i],hitCsv.buffTime[i]);
+			BuffCsv buffCsv = StaticData.GetData<BuffCsv>(hitCsv.buff[i]);
+
+			if(buffCsv.harm){
+
+				battleControl.AddBuff(index,buffCsv.ID,hitCsv.buffTime[i]);
+
+			}else{
+
+				AddBuff(buffCsv.ID,hitCsv.buffTime[i]);
+			}
 		}
 	}
 

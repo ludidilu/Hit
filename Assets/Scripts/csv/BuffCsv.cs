@@ -5,4 +5,5 @@ using System.Collections;
 public class BuffCsv : CsvBase {
 
 	public string buffName;
+	public bool harm;
 }

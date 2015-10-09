@@ -11,4 +11,5 @@ public class BattleConstData{
 	public static float SLOW_VALUE = 0.5f;
 	public static float BLOOD_VALUE = 0.1f;
 	public static float CRACK_VALUE = 2;
+	public static float PROTECT_VALUE = 0.5f;
 }

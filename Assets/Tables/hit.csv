@@ -3,3 +3,4 @@ number,number,number,string,string
 ID,interrupt,damage,buff,buffTime
 1,1,100,1,2
 2,0,150,2,3
+3,0,100,5,4

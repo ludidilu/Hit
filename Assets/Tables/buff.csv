@@ -1,7 +1,8 @@
-编号,Buff名字
-number,string
-ID,buffName
-1,减速
-2,沉默
-3,流血
-4,破甲
+编号,Buff名字,是否有害
+number,string,number
+ID,buffName,harm
+1,减速,1
+2,沉默,1
+3,流血,1
+4,破甲,1
+5,保护,0

@@ -7,7 +7,7 @@ using xy3d.tstd.lib.superFunction;
 public class BattleBuff : MonoBehaviour {
 
 	public Text buffText;
-	public GameObject img;
+	public Image img;
 
 	private HeroContainer heroContainer;
 
@@ -22,6 +22,8 @@ public class BattleBuff : MonoBehaviour {
 		csv = StaticData.GetData<BuffCsv> (_id);
 
 		buffText.text = csv.buffName;
+
+		img.color = csv.harm ? Color.red : Color.green;
 
 		buffTime = _buffTime;
 
@@ -67,6 +69,12 @@ public class BattleBuff : MonoBehaviour {
 			heroContainer.SetDamageFix(BattleConstData.CRACK_VALUE);
 			
 			break;
+
+		case 5:
+
+			heroContainer.SetDamageFix(BattleConstData.PROTECT_VALUE);
+			
+			break;
 		}
 	}
 
@@ -78,7 +86,7 @@ public class BattleBuff : MonoBehaviour {
 
 			_deltaTime = buffTime * BattleConstData.SLOW_VALUE + (_deltaTime - buffTime);
 
-			heroContainer.SetSpeed(1);
+			heroContainer.SetSpeed(1 / BattleConstData.SLOW_VALUE);
 			
 			break;
 
@@ -96,7 +104,13 @@ public class BattleBuff : MonoBehaviour {
 
 		case 4:
 			
-			heroContainer.SetDamageFix(1);
+			heroContainer.SetDamageFix(1 / BattleConstData.CRACK_VALUE);
+			
+			break;
+
+		case 5:
+			
+			heroContainer.SetDamageFix(1 / BattleConstData.PROTECT_VALUE);
 			
 			break;
 		}

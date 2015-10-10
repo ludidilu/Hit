@@ -19,7 +19,7 @@ namespace xy3d.tstd.lib.publicTools
 
 	    private ActorParabolaUnit[] apList;
 
-        private int toID;
+//        private int toID;
 
         public ActorParabolaEffectUnit(GameObject _effectGO, Vector3 _startPos, Vector3 _endPos, int _effectNum, float time, Action<ActorParabolaEffectUnit, int, int> callBack, int _targetIndex, int _bulletIndex)
 	    {
@@ -51,11 +51,11 @@ namespace xy3d.tstd.lib.publicTools
 
             Action toCall = delegate()
             {
-                SuperTween.Instance.Remove(toID);
+//                SuperTween.Instance.Remove(toID);
                 callBack(this, _targetIndex, _bulletIndex);
             };
 
-            toID = SuperTween.Instance.To(0, 1, time, SetPercent, toCall);
+            SuperTween.Instance.To(0, 1, time, SetPercent, toCall);
 	    }
 
 	    public void SetPercent(float value)

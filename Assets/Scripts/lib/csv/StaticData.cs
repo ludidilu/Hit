@@ -7,295 +7,351 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
+//using xy3d.tstd.game;
 using xy3d.tstd.lib.assetManager;
 using xy3d.tstd.lib.wwwManager;
+//using Assets.Scripts.common.lib.sds;
 using xy3d.tstd.lib.systemIO;
+//using xy3d.tstd.common.lib;
 
-namespace xy3d.tstd.lib.csv{
+public class StaticData
+{
+    private static string path = "/Tables/";
 
-	public class StaticData
-	{
-		private static string path = "/Tables/";
+    private static string datName = "csv.dat";
 
-		private static string datName = "csv.dat";
+    private static Dictionary<Type, object> dic = new Dictionary<Type, object>();
 
-		private static Dictionary<Type,object> dic = new Dictionary<Type, object> ();
+    public static T GetData<T>(int _id) where T : CsvBase
+    {
+        Dictionary<int, T> tmpDic = dic[typeof(T)] as Dictionary<int, T>;
 
-		public static T GetData<T> (int _id) where T:CsvBase
-		{
-			return (T)(dic [typeof(T)] as Dictionary<int,T>) [_id];
-		}
+        if (!tmpDic.ContainsKey(_id))
+        {
 
-		public static T GetDataOfKey<T> (string key, object keyValueParam) where T : CsvBase
-		{
-			Dictionary<int,T> dict = GetDic<T> ();
+            Debug.LogError(typeof(T).Name + "表中未找到ID为:" + _id + "的行!");
+        }
 
-			foreach (KeyValuePair<int, T> item in dict) {
-				Type x = item.Value.GetType ();
-				FieldInfo field = x.GetField (key);
-				object keyValue = field.GetValue (item.Value);
+        return tmpDic[_id];
+    }
 
-				if (keyValue.Equals (keyValueParam)) {
-					return item.Value;
-				}
-			}
+    public static T GetDataOfKey<T>(string key, object keyValueParam) where T : CsvBase
+    {
+        Dictionary<int, T> dict = GetDic<T>();
 
-			return default(T);
-		}
+        foreach (KeyValuePair<int, T> item in dict)
+        {
+            Type x = item.Value.GetType();
+            FieldInfo field = x.GetField(key);
+            object keyValue = field.GetValue(item.Value);
 
-		public static Dictionary<int,T> GetDic<T> () where T:CsvBase
-		{
-			if (!dic.ContainsKey (typeof(T))) {
-				Debug.Log ("zhaobudao" + typeof(T));
-			}
-			return dic [typeof(T)] as Dictionary<int,T>;
-		}
+            if (keyValue.Equals(keyValueParam))
+            {
+                return item.Value;
+            }
+        }
 
-		public static void SaveCsvDataToFile ()
-		{
-			SystemIO.SaveSerializeFile (Application.streamingAssetsPath + "/" + datName, dic);
-		}
+        return default(T);
+    }
 
-		public static void LoadCsvDataFromFile (Action _callBack)
-		{
-			Action<WWW> callBack = delegate(WWW _www) {
+    
 
-				LoadCsvDataFileOK (_www, _callBack);
-			};
+    public static Dictionary<int, T> GetDic<T>() where T : CsvBase
+    {
+        if (!dic.ContainsKey(typeof(T)))
+        {
+            Debug.Log("zhaobudao" + typeof(T));
+        }
+        return dic[typeof(T)] as Dictionary<int, T>;
+    }
 
-			WWWManager.Instance.Load (datName, callBack);
-		}
+    public static void SaveCsvDataToFile()
+    {
+        SystemIO.SaveSerializeFile(Application.streamingAssetsPath + "/" + datName, dic);
+    }
 
-		private static void LoadCsvDataFileOK (WWW _www, Action _callBack)
-		{
+    public static void LoadCsvDataFromFile(Action _callBack)
+    {
+        Action<WWW> callBack = delegate(WWW _www)
+        {
 
-			using (Stream stream = new MemoryStream(_www.bytes)) {
+            LoadCsvDataFileOK(_www, _callBack);
+        };
 
-				BinaryFormatter formatter = new BinaryFormatter ();
+        WWWManager.Instance.Load(datName, callBack);
+    }
 
-				dic = formatter.Deserialize (stream) as Dictionary<Type,object>;
+    private static void LoadCsvDataFileOK(WWW _www, Action _callBack)
+    {
 
-				_callBack ();
-			}               
-		}
+        using (Stream stream = new MemoryStream(_www.bytes))
+        {
 
-		public static void Reset(){
+            BinaryFormatter formatter = new BinaryFormatter();
 
-			dic = new Dictionary<Type, object>();
-		}
+            dic = formatter.Deserialize(stream) as Dictionary<Type, object>;
 
-		public static void Load<T> (string _name) where T:CsvBase
-		{
+            _callBack();
+        }
+    }
 
-			Type type = typeof(T);
+    public static void Reset()
+    {
 
-			if (dic.ContainsKey (type)) {
+        dic = new Dictionary<Type, object>();
+    }
 
-				return;
-			}
+    public static void Load<T>(string _name) where T : CsvBase
+    {
 
-			Dictionary<int,T> result = new Dictionary<int, T> ();
+        Type type = typeof(T);
 
-			using (FileStream fs = new FileStream(Application.dataPath + path + _name + ".csv",FileMode.Open,FileAccess.Read,FileShare.ReadWrite)) {
+        if (dic.ContainsKey(type))
+        {
 
-				using (StreamReader reader = new StreamReader(fs)) {
+            return;
+        }
 
-					int i = 0;
+        Dictionary<int, T> result = new Dictionary<int, T>();
 
-					string lineStr = reader.ReadLine ();
+        using (FileStream fs = new FileStream(Application.dataPath + path + _name + ".csv", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        {
 
-					FieldInfo[] infoArr = null;
+            using (StreamReader reader = new StreamReader(fs))
+            {
 
-					while (lineStr != null) {
+                int i = 0;
 
-						if (i == 2) {
+                string lineStr = reader.ReadLine();
 
-							string[] dataArr = lineStr.Split (",".ToCharArray ());
+                FieldInfo[] infoArr = null;
 
-							infoArr = new FieldInfo[dataArr.Length];
+                while (lineStr != null)
+                {
 
-							for (int m = 1; m < dataArr.Length; m++) {
+                    if (i == 2)
+                    {
 
-								infoArr [m] = type.GetField (dataArr [m]);
-							}
+                        string[] dataArr = lineStr.Split(",".ToCharArray());
 
-						} else if (i > 2) {
+                        infoArr = new FieldInfo[dataArr.Length];
 
-							string[] dataArr = lineStr.Split (",".ToCharArray ());
+                        for (int m = 1; m < dataArr.Length; m++)
+                        {
 
-							T csv = (T)Activator.CreateInstance (type);
+                            infoArr[m] = type.GetField(dataArr[m]);
+                        }
 
-							csv.ID = Int32.Parse (dataArr [0]);
+                    }
+                    else if (i > 2)
+                    {
 
-							for (int m = 1; m < infoArr.Length; m++) {
+                        string[] dataArr = lineStr.Split(",".ToCharArray());
 
-								FieldInfo info = infoArr [m];
+                        T csv = (T)Activator.CreateInstance(type);
 
-								if (info != null) {
+                        csv.ID = Int32.Parse(dataArr[0]);
 
-									setData (info, csv, dataArr [m]);
-								}
-							}
+                        for (int m = 1; m < infoArr.Length; m++)
+                        {
 
-							csv.Fix();
+                            FieldInfo info = infoArr[m];
 
-							result.Add (csv.ID, csv);
-						}
+                            if (info != null)
+                            {
 
-						i++;
+                                setData(info, csv, dataArr[m]);
+                            }
+                        }
 
-						lineStr = reader.ReadLine ();
-					}
-				}
-			}
+						csv.Fix();
 
-			dic.Add (type, result);
-	//        Debug.Log("StaticData.Load" + Application.dataPath + path + _name + ".csv" + "  complete!!!");
-		}
+                        result.Add(csv.ID, csv);
+                    }
 
+                    i++;
 
-		
-		private static void setData (FieldInfo _info, CsvBase _csv, string _data)
-		{
+                    lineStr = reader.ReadLine();
+                }
+            }
+        }
 
-	//		string str = "setData:" + _info.Name + "   " + _info.FieldType.Name + "   " + _data + "   " + _data.Length + Environment.NewLine;
+        dic.Add(type, result);
+        //        Debug.Log("StaticData.Load" + Application.dataPath + path + _name + ".csv" + "  complete!!!");
+    }
 
-			//Debug.Log(str);
-			try {
-				switch (_info.FieldType.Name) {
 
-				case "Int32":
 
-					if (string.IsNullOrEmpty (_data)) {
+    private static void setData(FieldInfo _info, CsvBase _csv, string _data)
+    {
 
-						_info.SetValue (_csv, 0);
+        string str = "setData:" + _info.Name + "   " + _info.FieldType.Name + "   " + _data + "   " + _data.Length + Environment.NewLine;
 
-					} else {
+        //Debug.Log(str);
+        try
+        {
+            switch (_info.FieldType.Name)
+            {
 
-						_info.SetValue (_csv, Int32.Parse (_data));
+                case "Int32":
 
-					}
+                    if (string.IsNullOrEmpty(_data))
+                    {
 
-					break;
+                        _info.SetValue(_csv, 0);
 
-				case "String":
+                    }
+                    else
+                    {
 
-					_info.SetValue (_csv, _data);
+                        _info.SetValue(_csv, Int32.Parse(_data));
 
-					break;
+                    }
 
-				case "Boolean":
+                    break;
 
-					_info.SetValue (_csv, _data == "1" ? true : false);
+                case "String":
 
-					break;
+                    _info.SetValue(_csv, _data);
 
-				case "Single":
+                    break;
 
-					if (string.IsNullOrEmpty (_data)) {
+                case "Boolean":
 
-						_info.SetValue (_csv, 0);
+                    _info.SetValue(_csv, _data == "1" ? true : false);
 
-					} else {
+                    break;
 
-						_info.SetValue (_csv, float.Parse (_data));
-					}
+                case "Single":
 
-					break;
+                    if (string.IsNullOrEmpty(_data))
+                    {
 
-				case "Int32[]":
+                        _info.SetValue(_csv, 0);
 
-					int[] intResult;
+                    }
+                    else
+                    {
 
-					if (!string.IsNullOrEmpty (_data)) {
+                        _info.SetValue(_csv, float.Parse(_data));
+                    }
 
-						string[] strArr = _data.Split ("$".ToCharArray ());
+                    break;
 
-						intResult = new int[strArr.Length];
+                case "Int32[]":
 
-						for (int i = 0; i < strArr.Length; i++) {
-						
-							intResult [i] = Int32.Parse (strArr [i]);
-						}
+                    int[] intResult;
 
-					} else {
+                    if (!string.IsNullOrEmpty(_data))
+                    {
 
-						intResult = new int[0];
-					}
+                        string[] strArr = _data.Split("$".ToCharArray());
 
-					_info.SetValue (_csv, intResult);
+                        intResult = new int[strArr.Length];
 
-					break;
+                        for (int i = 0; i < strArr.Length; i++)
+                        {
 
-				case "String[]":
+                            intResult[i] = Int32.Parse(strArr[i]);
+                        }
 
-					string[] stringResult;
+                    }
+                    else
+                    {
 
-					if (!string.IsNullOrEmpty (_data)) {
-				
-						stringResult = _data.Split ("$".ToCharArray ());
+                        intResult = new int[0];
+                    }
 
-					} else {
+                    _info.SetValue(_csv, intResult);
 
-						stringResult = new string[0];
-					}
+                    break;
 
-					_info.SetValue (_csv, stringResult);
+                case "String[]":
 
-					break;
+                    string[] stringResult;
 
-				case "Boolean[]":
+                    if (!string.IsNullOrEmpty(_data))
+                    {
 
-					bool[] boolResult;
+                        stringResult = _data.Split("$".ToCharArray());
 
-					if (!string.IsNullOrEmpty (_data)) {
+                    }
+                    else
+                    {
 
-						string[] strArr = _data.Split ("$".ToCharArray ());
+                        stringResult = new string[0];
+                    }
 
-						boolResult = new bool[strArr.Length];
+                    _info.SetValue(_csv, stringResult);
 
-						for (int i = 0; i < strArr.Length; i++) {
-						
-							boolResult [i] = strArr [i] == "1" ? true : false;
-						}
+                    break;
 
-					} else {
+                case "Boolean[]":
 
-						boolResult = new bool[0];
-					}
-				
-					_info.SetValue (_csv, boolResult);
-				
-					break;
+                    bool[] boolResult;
 
-				default:
+                    if (!string.IsNullOrEmpty(_data))
+                    {
 
-					float[] floatResult;
+                        string[] strArr = _data.Split("$".ToCharArray());
 
-					if (!string.IsNullOrEmpty (_data)) {
+                        boolResult = new bool[strArr.Length];
 
-						string[] strArr = _data.Split ("$".ToCharArray ());
-					
-						floatResult = new float[strArr.Length];
-					
-						for (int i = 0; i < strArr.Length; i++) {
-						
-							floatResult [i] = float.Parse (strArr [i]);
-						}
+                        for (int i = 0; i < strArr.Length; i++)
+                        {
 
-					} else {
+                            boolResult[i] = strArr[i] == "1" ? true : false;
+                        }
 
-						floatResult = new float[0];
-					}
-				
-					_info.SetValue (_csv, floatResult);
+                    }
+                    else
+                    {
 
-					break;
-				}
-			} catch (Exception e) {
+                        boolResult = new bool[0];
+                    }
 
-				Debug.Log (e.ToString());
-			}
-		}
-	}
+                    _info.SetValue(_csv, boolResult);
+
+                    break;
+
+                default:
+
+                    float[] floatResult;
+
+                    if (!string.IsNullOrEmpty(_data))
+                    {
+
+                        string[] strArr = _data.Split("$".ToCharArray());
+
+                        floatResult = new float[strArr.Length];
+
+                        for (int i = 0; i < strArr.Length; i++)
+                        {
+
+                            floatResult[i] = float.Parse(strArr[i]);
+                        }
+
+                    }
+                    else
+                    {
+
+                        floatResult = new float[0];
+                    }
+
+                    _info.SetValue(_csv, floatResult);
+
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+
+            Debug.Log(str);
+        }
+    }
+
+    internal static void Load<T>()
+    {
+        throw new NotImplementedException();
+    }
 }

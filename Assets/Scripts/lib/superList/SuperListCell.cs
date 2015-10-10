@@ -9,7 +9,7 @@ namespace xy3d.tstd.lib.superList{
 		protected object data;
 		protected bool selected;
 
-		public int index;
+		[HideInInspector]public int index;
 
 		// Use this for initialization
 		void Start () {

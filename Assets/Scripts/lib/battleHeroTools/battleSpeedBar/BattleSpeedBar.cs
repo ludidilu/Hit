@@ -37,6 +37,9 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         private MeshRenderer mr;
 
+        private GameObject speedBarGO;
+        private GameObject container;
+
         private static BattleSpeedBar _Instance;
 
         public static BattleSpeedBar Instance
@@ -59,26 +62,38 @@ namespace xy3d.tstd.lib.battleHeroTools
 		{
 			
 			helper = new BattleSpeedBarHelper();
-            init(75, 75, 85, 85, 20, 100, 8);
+            //init(75, 75, 85, 85, 20, 100, 8);
 		}
 		
-		public void init(float _picWidth, float _picHeight, float _frameWidth, float _frameHeight,
-                    float _fixX, float _fixY, float _gap){
+		public void Init(float _picWidth, float _picHeight, float _frameWidth, float _frameHeight,  float _fixX, float _fixY, float _gap, GameObject con)
+        {
+
+            container = con;
+
+            if (speedBarGO)
+            {
+                speedBarGO.SetActive(true);
+                return;
+            }
+
 			
 			oppHeroFixU = oneTextureWidth / allTextureWidth;
 
             texture = helper.init();
+
+            float sw = Screen.width;
+            float sh = Screen.height;
             
-			float picWidth = _picWidth / 960;
-			float picHeight = _picHeight / 640;
+			float picWidth = _picWidth / sw;
+			float picHeight = _picHeight / sh;
 			
-			float frameWidth = _frameWidth / 960;
-			float frameHeight = _frameHeight / 640;
+			float frameWidth = _frameWidth / sw;
+			float frameHeight = _frameHeight / sh;
 			
-			float gap = _gap / 640;
+			float gap = _gap / sh;
 			
-			_fixX = _fixX / 960;
-			_fixY = _fixY / 640;
+			_fixX = _fixX / sw;
+			_fixY = _fixY / sh;
 			
 			unitVec = new BattleSpeedBarUnit[unitNum];
 			
@@ -165,11 +180,11 @@ namespace xy3d.tstd.lib.battleHeroTools
 				
 				unitVec[i] = new BattleSpeedBarUnit();
 			}
-			
-			GameObject speedObj = new GameObject();
-            speedObj.name = "SpeedObject";
-            MeshFilter mf = speedObj.AddComponent<MeshFilter>();
-            mr = speedObj.AddComponent<MeshRenderer>();
+
+            speedBarGO = new GameObject();
+            speedBarGO.name = "SpeedObject";
+            MeshFilter mf = speedBarGO.AddComponent<MeshFilter>();
+            mr = speedBarGO.AddComponent<MeshRenderer>();
 
 		    mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		    mr.receiveShadows = false;
@@ -200,33 +215,39 @@ namespace xy3d.tstd.lib.battleHeroTools
             mat.mainTexture = texture;
 
             mr.material = mat;
-			
+
+            speedBarGO.transform.SetParent(container.transform, false);
+            speedBarGO.SetActive(false);
 		}
 
         public void Update()
         {
-            for (int i = 0; i < unitNum * 2; i++)
+            if (mr != null)
             {
-                BattleSpeedBarUnit unit;
-                Vector4 uv;
-                if (i < unitNum)
-                {
-                    unit = unitVec[i];
-                    uv = unit.GetFrameUV();
-                }
-                else
-                {
 
-                    unit = unitVec[i - unitNum];
-                    uv = unit.GetUV();
+                for (int i = 0; i < unitNum * 2; i++)
+                {
+                    BattleSpeedBarUnit unit;
+                    Vector4 uv;
+                    if (i < unitNum)
+                    {
+                        unit = unitVec[i];
+                        uv = unit.GetFrameUV();
+                    }
+                    else
+                    {
+
+                        unit = unitVec[i - unitNum];
+                        uv = unit.GetUV();
+                    }
+                    mr.material.SetVector("fix" + i.ToString(), uv);
                 }
-                mr.sharedMaterial.SetVector("fix" + i.ToString(), uv);
             }
         }
 		
 		private void setIcon(int _index, string _name, bool _isMyHero)
         {
-			
+
 			int index = nameVec.IndexOf(_name);
 			
 			unitVec[_index].u = ((int)(index % seg)) * oneTextureWidth / allTextureWidth;
@@ -242,7 +263,7 @@ namespace xy3d.tstd.lib.battleHeroTools
 			}
 		}
 		
-		public void start(List<string> _nameVec){
+		public void Start(List<string> _nameVec){
 			
 			nameVec = new List<string>(_nameVec.Count + 2);
 			
@@ -253,14 +274,8 @@ namespace xy3d.tstd.lib.battleHeroTools
 				
 				nameVec.Add(_nameVec[i]);
 			}
-			
-            helper.start(nameVec); ;
-		}
-		
-		public void end(){
-			
-			nameVec = null;
-			
+
+            helper.start(nameVec, TextureLoadOK); ;
 		}
 		
 		private void reloadTextureReal()
@@ -271,12 +286,17 @@ namespace xy3d.tstd.lib.battleHeroTools
 			mat.mainTexture = texture;
 			
 			if(nameVec != null){
-			
-				helper.start(nameVec);
+
+                helper.start(nameVec, TextureLoadOK);
 			}
 		}
+
+        private void TextureLoadOK()
+        {
+            speedBarGO.SetActive(true);
+        }
 		
-		public void setIcons(List<string> _vec, List<bool> _isMyHeroVec)
+		public void SetIcons(List<string> _vec, List<bool> _isMyHeroVec)
         {
 			
 			for(int i = 0 ; i < unitNum ; i++){
@@ -285,8 +305,10 @@ namespace xy3d.tstd.lib.battleHeroTools
 			}
 		}
 		
-		public void Dispose(){
-			
+		public void Dispose()
+        {
+            nameVec = null;
+            speedBarGO.SetActive(false);
 		}
     }
 }

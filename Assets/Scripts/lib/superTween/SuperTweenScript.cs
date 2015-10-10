@@ -9,30 +9,54 @@ namespace xy3d.tstd.lib.superTween{
 	public class SuperTweenScript : MonoBehaviour {
 
 		private Dictionary<int,SuperTweenUnit> dic;
+		private Dictionary<Action<float>,SuperTweenUnit> toDic;
 		private int index;
 
 		// Use this for initialization
 		void Awake () {
 		
 			dic = new Dictionary<int,SuperTweenUnit>();
+			toDic = new Dictionary<Action<float>, SuperTweenUnit> ();
 		}
 
 		public int To(float _startValue,float _endValue,float _time,Action<float> _delegate,Action _endCallBack){
 
-			int result = GetIndex();
+			if (toDic.ContainsKey (_delegate)) {
 
-			SuperTweenUnit unit = new SuperTweenUnit(result,_startValue,_endValue,_time,_delegate,_endCallBack);
+				SuperTweenUnit unit = toDic[_delegate];
 
-			dic.Add(result,unit);
+				unit.Init(unit.index, _startValue, _endValue, _time, _delegate, _endCallBack);
 
-			return result;
+				return unit.index;
+
+			} else {
+
+				int result = GetIndex ();
+
+				SuperTweenUnit unit = new SuperTweenUnit ();
+
+				unit.Init(result, _startValue, _endValue, _time, _delegate, _endCallBack);
+
+				dic.Add (result, unit);
+
+				toDic.Add(_delegate,unit);
+
+				return result;
+			}
 		}
 
 		public void Remove(int _index){
 			
 			if(dic.ContainsKey(_index)){
 
+				SuperTweenUnit unit = dic[_index];
+
 				dic.Remove(_index);
+
+				if(unit.dele != null){
+
+					toDic.Remove(unit.dele);
+				}
 			}
 		}
 
@@ -40,7 +64,9 @@ namespace xy3d.tstd.lib.superTween{
 
 			int result = GetIndex();
 
-			SuperTweenUnit unit = new SuperTweenUnit(result,0,0,_time,null,_endCallBack);
+			SuperTweenUnit unit = new SuperTweenUnit();
+
+			unit.Init(result,0,0,_time,null,_endCallBack);
 
 			dic.Add(result,unit);
 
@@ -51,7 +77,9 @@ namespace xy3d.tstd.lib.superTween{
 
 			int result = GetIndex();
 			
-			SuperTweenUnit unit = new SuperTweenUnit(result,0,0,0,null,_endCallBack);
+			SuperTweenUnit unit = new SuperTweenUnit();
+
+			unit.Init(result,0,0,0,null,_endCallBack);
 			
 			dic.Add(result,unit);
 			
@@ -74,6 +102,8 @@ namespace xy3d.tstd.lib.superTween{
 						if(unit.dele != null){
 
 							unit.dele(unit.endValue);
+
+							toDic.Remove(unit.dele);
 						}
 
 						endList.Add(unit);

@@ -18,7 +18,7 @@ namespace xy3d.tstd.lib.superTween{
 
 		public Action<float> dele;
 
-		public SuperTweenUnit(int _index,float _startValue,float _endValue,float _time,Action<float> _delegate,Action _endCallBack){
+		public void Init(int _index,float _startValue,float _endValue,float _time,Action<float> _delegate,Action _endCallBack){
 
 			index = _index;
 

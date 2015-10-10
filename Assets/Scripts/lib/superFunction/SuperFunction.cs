@@ -36,10 +36,10 @@ namespace xy3d.tstd.lib.superFunction{
 
 		public int AddEventListener(GameObject _target,string _eventName,Action<SuperEvent> _callBack){
 
+			int result = GetIndex();
+
 			if (dispatchEventIndex > 0) {
 
-				int result = GetIndex();
-				
 				Action del = delegate() {
 
 					AddEventListener(_target,_eventName,_callBack,result);
@@ -51,26 +51,15 @@ namespace xy3d.tstd.lib.superFunction{
 
 			}else{
 
-				return AddEventListener(_target,_eventName,_callBack,-1);
+				return AddEventListener(_target,_eventName,_callBack,result);
 			}
 		}
 
 		private int AddEventListener(GameObject _target,string _eventName,Action<SuperEvent> _callBack,int _index){
 
-			int result;
-			
-			if(_index == -1){
-				
-				result = GetIndex();
-				
-			}else{
-				
-				result = _index;
-			}
+			SuperFunctionUnit unit = new SuperFunctionUnit(_target,_eventName,_callBack,_index);
 
-			SuperFunctionUnit unit = new SuperFunctionUnit(_target,_eventName,_callBack,result);
-
-			dic.Add(result,unit);
+			dic.Add(_index,unit);
 
 			Dictionary<string,List<SuperFunctionUnit>> tmpDic;
 
@@ -100,7 +89,7 @@ namespace xy3d.tstd.lib.superFunction{
 
 			tmpList.Add(unit);
 
-			return result;
+			return _index;
 		}
 
 		public void RemoveEventListener(int _index){
@@ -259,7 +248,7 @@ namespace xy3d.tstd.lib.superFunction{
 
 			dispatchEventIndex++;
 			
-			_event.target = _target;
+//			_event.target = _target;
 
 			if (dic2.ContainsKey (_target)) {
 				
@@ -271,9 +260,17 @@ namespace xy3d.tstd.lib.superFunction{
 					
 					foreach(SuperFunctionUnit unit in tmpList){
 
-						_event.index = unit.index;
+//						_event.index = unit.index;
 
-						unit.callBack(_event);
+						SuperEvent tmpEvent = new SuperEvent(_event.eventName);
+
+						tmpEvent.target = _target;
+
+						tmpEvent.data = _event.data;
+
+						tmpEvent.index = unit.index;
+
+						unit.callBack(tmpEvent);
 					}
 				}
 			}

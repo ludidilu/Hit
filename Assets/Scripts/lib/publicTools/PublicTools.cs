@@ -32,7 +32,7 @@ namespace xy3d.tstd.lib.publicTools
 			{
 				for (int i = 0; i < _obj.transform.childCount; i++)
 				{
-					GameObject tmpObj = FindChild(_obj.transform.GetChild(i).gameObject, _name);
+					GameObject tmpObj = FindChildForce(_obj.transform.GetChild(i).gameObject, _name);
 					
 					if (tmpObj != null)
 					{

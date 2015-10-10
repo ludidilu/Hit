@@ -14,6 +14,22 @@ namespace xy3d.tstd.lib.battleHeroTools
         private Vector4 vec = new Vector4();
 		
 		public BattleDamageNumUnit nextUnit;
+
+        private int state;
+
+        public int State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+
+        private bool isChange = true;
+
+        public bool IsChange
+        {
+            get { return isChange; }
+            set { isChange = value; }
+        }
 		
 		public BattleDamageNumUnit()
 		{

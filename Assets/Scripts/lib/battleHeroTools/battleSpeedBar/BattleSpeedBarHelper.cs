@@ -19,12 +19,9 @@ namespace xy3d.tstd.lib.battleHeroTools
             return resultTexture;
         }
 
-        public void start(List<string> _vec)
+        public void start(List<string> _vec, Action loadOK)
         {
-            Graphics.SetRenderTarget(resultTexture);
-
-            GL.LoadPixelMatrix(0, BattleSpeedBar.allTextureWidth, BattleSpeedBar.allTextureHeight, 0);
-
+            int loadNum = _vec.Count;
             for (int i = 0; i < _vec.Count; i++)
             {
                 string name = _vec[i];
@@ -32,20 +29,32 @@ namespace xy3d.tstd.lib.battleHeroTools
                 int m = (int)(i % BattleSpeedBar.seg);
                 int n = (int)(i / BattleSpeedBar.seg);
 
-
                 Rect rect = new Rect(m * BattleSpeedBar.oneTextureWidth, n * BattleSpeedBar.oneTextureHeight, BattleSpeedBar.oneTextureWidth, BattleSpeedBar.oneTextureHeight);
 
                 Action<Texture> loadCall = delegate(Texture t)
                 {
+                    Graphics.SetRenderTarget(resultTexture);
+                    
+                    GL.LoadPixelMatrix(0, BattleSpeedBar.allTextureWidth, BattleSpeedBar.allTextureHeight, 0);
                     Graphics.DrawTexture(rect, t);
+                    loadNum--;
+                    if (loadNum == 0)
+                    {
+                        if (loadOK != null)
+                        {
+                            loadOK();
+                        }
+                    }
                 };
 
-                TextureFactory.Instance.GetTexture<Texture>("Assets/PlayGround/icon/" + name + ".png", loadCall, true);
 
-                //Texture texture = AssetDatabase.LoadAssetAtPath<Texture>("Assets/PlayGround/icon/" + name + ".png");
+                TextureFactory.Instance.GetTexture<Texture>("Assets/Arts/UI/icons/" + name + ".png", loadCall, true);
+
+                //Texture texture = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Arts/battle/icon/" + name + ".png");
 
             }
         }
+
 
     }
 }

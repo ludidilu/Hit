@@ -8,6 +8,5 @@ public class CsvBase {
 
 	public virtual void Fix(){
 
-
 	}
 }

@@ -41,6 +41,7 @@ namespace xy3d.tstd.lib.publicTools
 	        effect.transform.LookAt(endPos);
 	        effect.transform.Rotate(new Vector3(0, 90, 0));
 	        float distance = Vector3.Distance(startPos, endPos);
+//	        Renderer effectRender = effect.transform.GetComponent<Renderer>();
 	        float effectScale = distance / width;
 	        effect.transform.localScale = new Vector3(effectScale,1,1);
 	        startPos = endPos;

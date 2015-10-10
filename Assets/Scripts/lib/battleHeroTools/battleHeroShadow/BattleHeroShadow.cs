@@ -4,15 +4,20 @@ using xy3d.tstd.lib.gameObjectFactory;
 
 namespace xy3d.tstd.lib.battleHeroTools
 {
-    class BattleHeroShadow
+    public class BattleHeroShadow
     {
 
-        private const int shadowNum = 40;
+        public const int shadowNum = 40;
+
+        public const float pngWidth = 230f / 128f;
+        public const float pngHeight = 230f / 128f;
+
         private BattleHeroShadowUnit[] unitVec;
-        private bool[] unitUseVec;
-        private int useNum = 0;
 
         private MeshRenderer mr;
+
+        private GameObject shadowGO;
+        private GameObject container;
 
         private static BattleHeroShadow _Instance;
 
@@ -34,47 +39,51 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public BattleHeroShadow()
         {
-            Init();
+
         }
 
-        private void Init()
+        public void Init(GameObject con)
         {
 
-            unitVec = new BattleHeroShadowUnit[shadowNum];
+            container = con;
 
-            unitUseVec = new bool[shadowNum];
+            if (shadowGO)
+            {
+                shadowGO.SetActive(true);
+                return;
+            }
+
+            unitVec = new BattleHeroShadowUnit[shadowNum];
 
             for (int i = 0; i < shadowNum; i++)
             {
                 unitVec[i] = new BattleHeroShadowUnit();
-                unitUseVec[i] = false;
             }
 
             Action<GameObject> loadGameObject = delegate(GameObject _go)
             {
-//                PopUpManager.Instance.AddPopUp(_go, PopUp2LayerType.Type_Main);
+                shadowGO = _go;
+                shadowGO.transform.SetParent(container.transform, false);
                 mr = _go.GetComponent<MeshRenderer>();
             };
 
-            GameObjectFactory.Instance.GetGameObject("Assets/PlayGround/BattleTool/Shadow.prefab", loadGameObject, true);            
+            GameObjectFactory.Instance.GetGameObject("Assets/Arts/battle/BattleTool/Shadow.prefab", loadGameObject, true);            
         }
 
-        public BattleHeroShadowUnit getShadow(GameObject _go)
+        public BattleHeroShadowUnit GetShadow(GameObject _go)
         {
 			BattleHeroShadowUnit unit = null;
 
-			useNum++;
-			
 			for(int i = 0 ; i < shadowNum ; i++){
 				
-				if(!unitUseVec[i])
+				if(unitVec[i].State == 0)
                 {
 					
 					unit = unitVec[i];
-					
-					unitUseVec[i] = true;
 
                     unit.Init(_go);
+
+                    unit.State = 1;
 			
 					break;
 				}
@@ -85,32 +94,36 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public void Update()
         {
-            for (int i = 0; i < shadowNum; i++)
-            {
-                BattleHeroShadowUnit unit = unitVec[i];
-                mr.sharedMaterial.SetVector("positions" + i.ToString(), unit.GetPositionsVec());
-                mr.sharedMaterial.SetMatrix("myMatrix" + i.ToString(), unit.GetMatrix());
-            }
+			if(mr != null){
+
+	            for (int i = 0; i < shadowNum; i++)
+	            {
+	                BattleHeroShadowUnit unit = unitVec[i];
+	                if (unit.State == 1 || unit.IsChange)
+	                {
+	                    if (unit.IsChange) unit.IsChange = false;
+	                    mr.material.SetVector("stateInfo" + i.ToString(), unit.GetStateInfoVec());
+						mr.material.SetMatrix("myMatrix" + i.ToString(), unit.GetMatrix());
+	                }
+	                
+	            }
+			}
         }
 
-        public void delShadow(BattleHeroShadowUnit _unit)
+        public void DelShadow(BattleHeroShadowUnit _unit)
         {
 			
-			_unit.alpha = 0;
+			_unit.Alpha = 0;
+            _unit.State = 0;
+            _unit.IsChange = true;
 			
-			unitUseVec[Array.IndexOf(unitVec, _unit)] = false;
-			
-			useNum--;
 			
 		}
 		
-		public void setContainer()
+		public void Dispose()
         {
+            shadowGO.SetActive(false);
 		}
-		
-		public void dispose()
-        {
-			
-		}
+
     }
 }

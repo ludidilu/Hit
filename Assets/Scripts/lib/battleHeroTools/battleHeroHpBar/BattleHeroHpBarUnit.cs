@@ -8,19 +8,45 @@ namespace xy3d.tstd.lib.battleHeroTools
 {
     public class BattleHeroHpBarUnit
     {
-        public static float ambientNormal = 1;
-
         private const float hpChangeTime = 1;//血条变化需要时间
 
-        public float alpha = 0;
         public Vector3 pos = new Vector3();
-        public Vector3 scale = new Vector3(0.3f, 0.3f, 0.3f);
+        public Vector3 scale = new Vector3(1, 1, 1);
         public Quaternion rotation = Quaternion.Euler(0, 0, 0);  
         private Matrix4x4 matrix = new Matrix4x4();
-        
+
+        private Vector4 posVec = new Vector4();
+        private Vector4 stateInfoVec = new Vector4();
+        private Vector4 fixVec = new Vector4();
+
+        private float alpha = 0;
+
+        public float Alpha
+        {
+            get { return alpha; }
+            set { alpha = value; }
+        }
+
+        private int state;
+
+        public int State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+
+        private bool isChange = true;
+
+        public bool IsChange
+        {
+            get { return isChange; }
+            set { isChange = value; }
+        }
 
         public float angerUFix;
         public float angerXFix;
+
+//        private float angerNum;
 
         public float hpUFix;
         public float hpXFix;
@@ -67,20 +93,27 @@ namespace xy3d.tstd.lib.battleHeroTools
             maxHp = _maxHp;
             Hp = _nowhp;
             go = _go;
-            updateAnger(_nowAnger);
+            UpdateAnger(_nowAnger);
         }
 
         public Vector4 GetPositionsVec()
         {
-            Vector4 vec = new Vector4();
+           
             if (go != null)
             {
-                vec.x = go.transform.position.x ;
-                vec.y = go.transform.position.y + 1.8f;
-                vec.z = go.transform.position.z;
-                vec.w = alpha;
+                posVec.x = go.transform.position.x;
+                posVec.y = go.transform.position.y + 1.2f;
+                posVec.z = go.transform.position.z;
+                posVec.w = 1;
             }
-            return vec;
+            return posVec;
+        }
+
+        public Vector4 GetStateInfoVec()
+        {
+            stateInfoVec.x = alpha;
+            stateInfoVec.y = State;
+            return stateInfoVec;
         }
 
         public Matrix4x4 GetMatrix()
@@ -88,6 +121,10 @@ namespace xy3d.tstd.lib.battleHeroTools
             
             if (go != null)
             {
+                //rotation = Quaternion.Euler(go.transform.eulerAngles.x, go.transform.eulerAngles.y, go.transform.eulerAngles.z);
+                scale.x = go.transform.localScale.x;
+                scale.y = go.transform.localScale.y;
+                scale.z = go.transform.localScale.z;
                 matrix.SetTRS(pos, rotation, scale);
             }
             return matrix;
@@ -95,15 +132,14 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public Vector4 GetFixVec()
         {
-            Vector4 vec = new Vector4();
             if (go != null)
             {
-                vec.x = hpUFix;
-                vec.y = hpXFix;
-                vec.z = angerUFix;
-                vec.w = angerXFix;
+                fixVec.x = hpUFix;
+                fixVec.y = hpXFix;
+                fixVec.z = angerUFix;
+                fixVec.w = angerXFix;
             }
-            return vec;
+            return fixVec;
         }
 
         public void resetHp(float _nowHp, float _maxHp)
@@ -112,7 +148,7 @@ namespace xy3d.tstd.lib.battleHeroTools
             Hp = _nowHp;
         }
 
-        public void updateAnger(float value)
+        public void UpdateAnger(float value)
         {
             angerUFix = (value / 10 - 1) * BattleHeroHpBar.angerBarWidth / BattleHeroHpBar.TEXTURE_WIDTH;
             angerXFix = (value / 10 - 1) * BattleHeroHpBar.angerBarWidth;

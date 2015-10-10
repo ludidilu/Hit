@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using xy3d.tstd.lib.csv;
 using xy3d.tstd.lib.superFunction;
 
 public class BattleBuff : MonoBehaviour {

@@ -6,55 +6,55 @@ namespace xy3d.tstd.lib.battleHeroTools
 {
     public class BattleHeroHpBar
     {
-        public const float boardWidth = 119.0f / 25;
-        public const float boardHeight = 43.0f / 25;
+        public const float boardWidth = 119.0f / 100;
+        public const float boardHeight = 43.0f / 100;
 
-        public const float hpBarWidth = 71.0f / 25;
-        public const float hpBarHeight = 5.0f / 25;
+        public const float hpBarWidth = 71.0f / 100;
+        public const float hpBarHeight = 5.0f / 100;
 
-        public const float hpBarX = 39.0f / 25;
-        public const float hpBarY = 15.0f / 25;
+        public const float hpBarX = 39.0f / 100;
+        public const float hpBarY = 15.0f / 100;
 
-        public const float myHpBarU = 147.0f / 25;
-        public const float myHpBarV = 1.0f / 25;
+        public const float myHpBarU = 147.0f / 100;
+        public const float myHpBarV = 1.0f / 100;
 
-        public const float oppHpBarU = 147.0f / 25;
-        public const float oppHpBarV = 14.0f / 25;
+        public const float oppHpBarU = 147.0f / 100;
+        public const float oppHpBarV = 14.0f / 100;
 
-        public const float iconBarWidth = 28.0f / 25;
-        public const float iconBarHeight = 28.0f / 25;
+        public const float iconBarWidth = 28.0f / 100;
+        public const float iconBarHeight = 28.0f / 100;
 
-        public const float iconBarX = 7.0f / 25;
-        public const float iconBarY = 7.0f / 25;
+        public const float iconBarX = 7.0f / 100;
+        public const float iconBarY = 7.0f / 100;
 
-        public const float iconBarV = 53.0f / 25;
+        public const float iconBarV = 53.0f / 100;
 
-        public const float iconBarXGap = 1.0f / 25;
-        public const float iconBarYGap = 1.0f / 25;
+        public const float iconBarXGap = 1.0f / 100;
+        public const float iconBarYGap = 1.0f / 100;
 
         public const float iconBarNumFirstLine = 6.0f;
 
-        public const float angerBarWidth = 69.0f / 25;
-        public const float angerBarHeight = 2.0f / 25;
+        public const float angerBarWidth = 69.0f / 100;
+        public const float angerBarHeight = 2.0f / 100;
 
-        public const float angerBarX = 40.0f / 25;
-        public const float angerBarY = 25.0f / 25;
+        public const float angerBarX = 40.0f / 100;
+        public const float angerBarY = 25.0f / 100;
 
-        public const float angerBarU = 147.0f / 25;
-        public const float angerBarV = 27.0f / 25;
+        public const float angerBarU = 147.0f / 100;
+        public const float angerBarV = 27.0f / 100;
 
-        public const float TEXTURE_WIDTH = 256.0f / 25;
-        public const float TEXTURE_HEIGHT = 128.0f / 25;
+        public const float TEXTURE_WIDTH = 256.0f / 100;
+        public const float TEXTURE_HEIGHT = 128.0f / 100;
 
         private MeshRenderer mr;
         private Mesh mesh;
 
-        private const int hpBarNum = 20;
-        private const int planeNum = 4;
+        public const int hpBarNum = 20;
+        public const int planeNum = 4;
         private BattleHeroHpBarUnit[] unitVec;
-        private bool[] unitUseVec;
 
-        private int useNum = 0;
+        private GameObject hpBarGO;
+        private GameObject container;
 
         private static BattleHeroHpBar _Instance;
 
@@ -76,62 +76,77 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public BattleHeroHpBar()
         {
-            Init();
         }
 
-        private void Init()
+        public void Init(GameObject con)
         {
-            unitVec = new BattleHeroHpBarUnit[hpBarNum];
 
-            unitUseVec = new bool[hpBarNum];
+            container = con;
+
+            if (hpBarGO)
+            {
+                hpBarGO.SetActive(true);
+                return;
+            }
+
+
+            unitVec = new BattleHeroHpBarUnit[hpBarNum];
 
             for (int i = 0; i < hpBarNum; i++)
             {
-
                 unitVec[i] = new BattleHeroHpBarUnit();
-                unitUseVec[i] = false;
             }
 
             Action<GameObject> loadGameObject = delegate(GameObject _go)
             {
-//                PopUpManager.Instance.AddPopUp(_go, PopUp2LayerType.Type_Main);
+                hpBarGO = _go;
+                hpBarGO.transform.SetParent(container.transform, false);
+
                 mr = _go.GetComponent<MeshRenderer>();
-                mesh = _go.GetComponent<MeshFilter>().sharedMesh;
+                mesh = _go.GetComponent<MeshFilter>().mesh;
             };
 
-            GameObjectFactory.Instance.GetGameObject("Assets/PlayGround/BattleTool/HpBar.prefab", loadGameObject, true); 
+            GameObjectFactory.Instance.GetGameObject("Assets/Arts/battle/BattleTool/HpBar.prefab", loadGameObject, true); 
 
         }
 
         public void Update()
         {
-            for (int i = 0; i < hpBarNum; i++)
-            {
-                BattleHeroHpBarUnit unit = unitVec[i];
-                Vector4 pos = unit.GetPositionsVec();
-                mr.sharedMaterial.SetVector("positions" + i.ToString(), pos);
+			if(mr != null){
 
-                mr.sharedMaterial.SetVector("fix" + i.ToString(), unit.GetFixVec());
-                mr.sharedMaterial.SetMatrix("myMatrix" + i.ToString(), unit.GetMatrix());
-            }
+	            for (int i = 0; i < hpBarNum; i++)
+	            {
+	                BattleHeroHpBarUnit unit = unitVec[i];
+	                if (unit.IsChange || unit.State == 1)
+	                {
+	                    if (unit.IsChange) unit.IsChange = false;
+	                    Vector4 pos = unit.GetPositionsVec();
+	                    mr.material.SetVector("positions" + i.ToString(), pos);
+
+                        mr.material.SetVector("fix" + i.ToString(), unit.GetFixVec());
+
+                        mr.material.SetVector("stateInfo" + i.ToString(), unit.GetStateInfoVec());
+
+                        mr.material.SetMatrix("myMatrix" + i.ToString(), unit.GetMatrix());
+	                }
+	            }
+			}
         }
-
         public BattleHeroHpBarUnit getHpBar(bool _myControl, int _type, float _nowhp, float _maxHp, int _nowAnger, GameObject _go)
         {
             BattleHeroHpBarUnit unit = null;
-            useNum++;
 
             for (int i = 0; i < hpBarNum; i++)
             {
 
-                if (!unitUseVec[i])
+                if (unitVec[i].State == 0)
                 {
 
                     unit = unitVec[i];
-
                     unit.Init(_nowhp, _maxHp, _nowAnger, _go);
 
-                    unitUseVec[i] = true;
+                    unit.State = 1;
+
                     Vector2[] uvs = mesh.uv;
                     if (_myControl)
                     {
@@ -180,16 +195,21 @@ namespace xy3d.tstd.lib.battleHeroTools
             return unit;
         }
 
-        public void delHpBar(BattleHeroHpBarUnit _unit)
+        public void DelHpBar(BattleHeroHpBarUnit _unit)
         {
 
-            _unit.alpha = 0;
-
-            unitUseVec[Array.IndexOf(unitVec, _unit)] = false;
-
-            useNum--;
+            _unit.Alpha = 0;
+            _unit.State = 0;
+            _unit.IsChange = true;
 
         }
+
+
+        public void Dispose()
+        {
+            hpBarGO.SetActive(false);
+        }
+
 
     }
 }

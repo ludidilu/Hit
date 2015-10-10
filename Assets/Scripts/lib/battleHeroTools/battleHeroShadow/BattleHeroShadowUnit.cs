@@ -3,15 +3,39 @@ using UnityEngine;
 
 namespace xy3d.tstd.lib.battleHeroTools
 {
-    class BattleHeroShadowUnit
+    public class BattleHeroShadowUnit
     {
         public Vector3 pos = new Vector3();
-        public Vector3 scale = new Vector3(0.3f, 0.3f, 0.3f);
-        public Quaternion rotation = Quaternion.Euler(90, 0, 0);
+        public Vector3 scale = new Vector3(1, 1, 1);
+        public Quaternion rotation = Quaternion.Euler(0, 0, 0);
         private Matrix4x4 matrix = new Matrix4x4();
-        
-		
-		public float alpha = 0;
+
+        private Vector4 stateInfoVec = new Vector4();
+
+
+        private float alpha = 0;
+
+        public float Alpha
+        {
+            get { return alpha; }
+            set { alpha = value; }
+        }
+
+        private int state;
+
+        public int State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+
+        private bool isChange = true;
+
+        public bool IsChange
+        {
+            get { return isChange; }
+            set { isChange = value; }
+        }
 
         private GameObject go;
 
@@ -20,17 +44,12 @@ namespace xy3d.tstd.lib.battleHeroTools
             go = _go;
         }
 
-        public Vector4 GetPositionsVec()
+        public Vector4 GetStateInfoVec()
         {
-            Vector4 vec = new Vector4();
-            if (go != null)
-            {
-                vec.x = go.transform.position.x;
-                vec.y = 0;
-                vec.z = go.transform.position.z;
-                vec.w = alpha;
-            }
-            return vec;
+            
+            stateInfoVec.x = Alpha;
+            stateInfoVec.y = State;
+            return stateInfoVec;
         }
 
         public Matrix4x4 GetMatrix()
@@ -39,8 +58,15 @@ namespace xy3d.tstd.lib.battleHeroTools
             if (go != null)
             {
                 pos.x = go.transform.position.x;
-                pos.y = 0.2f;
+                pos.y = go.transform.position.y + 0.1f;
                 pos.z = go.transform.position.z;
+
+                rotation = Quaternion.Euler(go.transform.eulerAngles.x, go.transform.eulerAngles.y, go.transform.eulerAngles.z);
+
+                scale.x = go.transform.localScale.x;
+                scale.y = go.transform.localScale.y;
+                scale.z = go.transform.localScale.z;
+
                 matrix.SetTRS(pos, rotation, scale);
             }
             return matrix;

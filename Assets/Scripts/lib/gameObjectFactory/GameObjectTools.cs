@@ -518,7 +518,9 @@ namespace xy3d.tstd.lib.gameObjectFactory{
 				if(uvFixIndex == -1){
 					
 					uvFixIndex = partTextureList.Count;
-
+					
+//					MeshRenderer mmm = _parts[i].GetComponent<MeshRenderer> ();
+					
 					partTextureList.Add(_parts[i].GetComponent<MeshRenderer> ().sharedMaterial.mainTexture);
 					
 					Graphics.DrawTexture (COMBINE_PART_TEXTURE_RECT_ARR[uvFixIndex], _parts[i].GetComponent<MeshRenderer> ().sharedMaterial.mainTexture);

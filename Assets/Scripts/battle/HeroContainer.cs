@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using xy3d.tstd.lib.csv;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using xy3d.tstd.lib.gameObjectFactory;

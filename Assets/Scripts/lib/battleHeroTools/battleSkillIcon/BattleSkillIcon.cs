@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using xy3d.tstd.lib.gameObjectFactory;
 using xy3d.tstd.lib.superTween;
 using xy3d.tstd.lib.textureFactory;
 
@@ -8,23 +9,22 @@ namespace xy3d.tstd.lib.battleHeroTools
 {
     public class BattleSkillIcon
     {
-		private const float ASSET_WIDTH = 512 / 64;
-		private const float ASSET_HEIGHT = 512 / 64;
+        public const float ASSET_WIDTH = 512f / 128f;
+        public const float ASSET_HEIGHT = 512f / 128f;
 
-        private const float FONT_WIDTH = 128 / 64;
-        private const float FONT_HEIGHT = 64 / 64;
+        public const float FONT_WIDTH = 128f / 128f;
+        public const float FONT_HEIGHT = 64f / 128f;
 		
 		public const int unitNum = 40;
 		
 		private BattleSkillIconUnit[] unitVec;
-		private List<BattleSkillIconUnit> unitUseVec;
-		private List<BattleSkillIconUnit> unitFreeVec;
 
         private Material mat;
 
         private MeshRenderer mr;
 
-        private Texture texture;
+        private GameObject skillIconGO;
+        private GameObject container;
 
         private static BattleSkillIcon _Instance;
 
@@ -45,144 +45,99 @@ namespace xy3d.tstd.lib.battleHeroTools
         }
 		
 		public  BattleSkillIcon(){
-            init();
 		}
 
-		private void init(){
+		public void Init(GameObject con){
+
+            container = con;
+
+            if (skillIconGO)
+            {
+                skillIconGO.SetActive(true);
+                return;
+            }
 			
 			unitVec = new BattleSkillIconUnit[unitNum];
 			
-			unitFreeVec = new List<BattleSkillIconUnit>();
-			
-			unitUseVec = new List<BattleSkillIconUnit>();
-			
-			Vector3[] vertices = new Vector3[unitNum * 4 ];
-		    Vector3[] normals = new Vector3[unitNum * 4];
-		    Vector2[] uvs = new Vector2[unitNum * 4];
-		    Vector4[] tangents = new Vector4[unitNum * 4];
-		    int[] triangles = new int[unitNum * 6];
-
 			
 			for(int i = 0 ; i < unitNum ; i++){
 				
-				vertices[i * 4] = new Vector3(-0.5f * FONT_WIDTH, -0.5f * FONT_HEIGHT, 0);
-                vertices[i * 4 + 1] = new Vector3(0.5f * FONT_WIDTH, 0.5f * FONT_HEIGHT, 0);
-                vertices[i * 4 + 2] = new Vector3(0.5f * FONT_WIDTH, -0.5f * FONT_HEIGHT, 0);
-                vertices[i * 4 + 3] = new Vector3(-0.5f * FONT_WIDTH, 0.5f * FONT_HEIGHT, 0);
-				
-                uvs[i * 4] = new Vector2(0, 0);
-                uvs[i * 4 + 1] = new Vector2(FONT_WIDTH / ASSET_WIDTH, FONT_HEIGHT / ASSET_HEIGHT);
-				uvs[i * 4 + 2] = new Vector2(FONT_WIDTH / ASSET_WIDTH, 0);
-				uvs[i * 4 + 3] = new Vector2(0, FONT_HEIGHT / ASSET_HEIGHT);
-				
-				tangents[i * 4] = new Vector4(i, 0, 0, 0);
-                tangents[i * 4 + 1] = new Vector4(i, 0, 0, 0);
-                tangents[i * 4 + 2] = new Vector4(i, 0, 0, 0);
-                tangents[i * 4 + 3] = new Vector4(i, 0, 0, 0);
-
-                triangles[i * 6] = i * 4;
-                triangles[i * 6 + 1] = i * 4 + 1;
-                triangles[i * 6 + 2] = i * 4 + 2;
-                triangles[i * 6 + 3] = i * 4 + 1;
-                triangles[i * 6 + 4] = i * 4;
-                triangles[i * 6 + 5] = i * 4 + 3;
-
                 unitVec[i] = new BattleSkillIconUnit();
-                unitFreeVec.Add(unitVec[i]);
 			}
-			
 
-            GameObject skillIconObj = new GameObject();
-            skillIconObj.name = "SkillIconObj";
-            MeshFilter mf = skillIconObj.AddComponent<MeshFilter>();
-            mr = skillIconObj.AddComponent<MeshRenderer>();
+            Action<GameObject> loadGameObject = delegate(GameObject _go)
+            {
+                skillIconGO = _go;
+                skillIconGO.transform.SetParent(container.transform, false);
+                mr = _go.GetComponent<MeshRenderer>();
+                mat = mr.material;
+            };
 
-		    mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-		    mr.receiveShadows = false;
-		    mr.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-		    mr.useLightProbes = false;
-
-		
-		    Mesh mesh = new Mesh();
-		    mesh.bounds.SetMinMax(new Vector3(), new Vector3(999, 999, 999));
-		    mf.sharedMesh = mesh;
-		
-		    mesh.vertices = vertices;
-		    mesh.normals = normals;
-		    mesh.tangents = tangents;
-		    mesh.uv = uvs;
-		
-		    mesh.triangles = triangles;
-
-		
-		    Bounds bounds = mesh.bounds;
-		
-		    bounds.Expand(1000f);
-		
-		    mesh.bounds = bounds;
-
-            mat = new Material(Shader.Find("Custom/BattleSkillIconPass"));
-            mr.material = mat;
+            GameObjectFactory.Instance.GetGameObject("Assets/Arts/battle/BattleTool/SkillIcon.prefab", loadGameObject, true);       
 		}
 
         public void Update()
         {
-            for (int i = 0; i < unitNum; i++)
-            {
-                BattleSkillIconUnit unit = unitVec[i];
-                Vector4 pos = unit.GetPositionsVec();
-                mr.sharedMaterial.SetVector("positions" + i.ToString(), pos);
+			if(mr != null){
 
-                mr.sharedMaterial.SetVector("fix" + i.ToString(), unit.GetFixVec());
-                mr.sharedMaterial.SetMatrix("myMatrix" + i.ToString(), unit.GetMatrix());
-            }
+	            for (int i = 0; i < unitNum; i++)
+	            {
+	                BattleSkillIconUnit unit = unitVec[i];
+	                if (unit.State == 1 || unit.IsChange)
+	                {
+	                    if (unit.IsChange) unit.IsChange = false;
+	                    Vector4 pos = unit.GetPositionsVec();
+	                    mr.material.SetVector("positions" + i.ToString(), pos);
+
+						mr.material.SetVector("fix" + i.ToString(), unit.GetFixVec());
+						mr.material.SetMatrix("myMatrix" + i.ToString(), unit.GetMatrix());
+	                }
+	            }
+			}
         }
 		
-		public BattleSkillIconUnit getSkillIcon(string _name, float _time,GameObject _go, Action<BattleSkillIconUnit,Action> endBack, Action _callBack){
-            if (unitFreeVec.Count > 0)
+		public BattleSkillIconUnit GetSkillIcon(string _name, float _time,GameObject _go, Action<BattleSkillIconUnit,Action> endBack, Action _callBack){
+            for(int i = 0; i < unitNum; i++)
             {
-                BattleSkillIconUnit unit = unitFreeVec[0];
-                unit.Init(_go);
-                Action<Sprite> callBack = delegate(Sprite _texture)
+                if(unitVec[i].State == 0)
                 {
-                    mat.mainTexture = _texture.texture;
+                    BattleSkillIconUnit unit = unitVec[i];
+                    unit.Init(_go);
 
-                    unitFreeVec.RemoveAt(0);
-
-                    unit.endBack = endBack;
-                    unit.callBack= _callBack;
-
-                    unit.uFix = _texture.textureRect.x / 512;
-                    unit.vFix = _texture.textureRect.y / 512;
                     unit.alpha = 1;
+                    unit.State = 1;
 
-                    unitUseVec.Add(unit);
-
-                    int tweenID = 0;
-
-                    Action delayCall = delegate()
+                    Action<Sprite> callBack = delegate(Sprite _texture)
                     {
-                        SuperTween.Instance.Remove(tweenID);
-                        readyToDelSkillIcon(unit);
+                        mat.mainTexture = _texture.texture;
+
+                        unit.endBack = endBack;
+                        unit.callBack = _callBack;
+
+                        unit.uFix = _texture.textureRect.x / 512;
+                        unit.vFix = _texture.textureRect.y / 512;
+                        unit.alpha = 1;
+
+                        Action delayCall = delegate()
+                        {
+                            readyToDelSkillIcon(unit);
+                        };
+
+                        SuperTween.Instance.DelayCall(_time, delayCall);
                     };
 
-                    tweenID = SuperTween.Instance.DelayCall(_time, delayCall);
-                };
+                    TextureFactory.Instance.GetTexture("Assets/Arts/ui/skillIcon/" + _name + ".png", callBack, true);
 
-                TextureFactory.Instance.GetTexture("Assets/PlayGround/icon/skillIcon/" + _name + ".png", callBack, true);
-				
-				return unit;
-				
-			}else{
-				
-				throw new Exception("SkillIcon is out of use!!!");
+                    return unit;
+                }
+                
 				
 			}
+
+			throw new Exception("SkillIcon is out of use!!!");
 		}
 		
 		private void readyToDelSkillIcon(BattleSkillIconUnit _unit){
-
-            int tweenID = 0;
 
             Action<float> toCall = delegate(float value)
             {
@@ -191,39 +146,38 @@ namespace xy3d.tstd.lib.battleHeroTools
 
             Action endCall = delegate()
             {
-                SuperTween.Instance.Remove(tweenID);
-                delSkillIcon(_unit);
+                DelSkillIcon(_unit);
             };
 
-            tweenID = SuperTween.Instance.To(_unit.alpha, 0, 1, toCall, endCall);
+            SuperTween.Instance.To(_unit.alpha, 0, 1, toCall, endCall);
 		}
 		
-		private void delSkillIcon(BattleSkillIconUnit _unit){
-			
-			unitUseVec.RemoveAt(unitUseVec.IndexOf(_unit));
-			
-			unitFreeVec.Add(_unit);
+		public void DelSkillIcon(BattleSkillIconUnit _unit){
 
-			if(_unit.endBack != null){
+            _unit.alpha = 0;
+            _unit.State = 0;
+            _unit.IsChange = true;
+
+            if (_unit.endBack != null)
+            {
 
                 Action<BattleSkillIconUnit, Action> endBack = _unit.endBack;
                 endBack(_unit, _unit.callBack);
-			}
+            }
 		}
 
         public void clearAll()
         {
 			
-			while(unitUseVec.Count > 0){
-				
-				unitUseVec[0].alpha = 0;
-				
-				delSkillIcon(unitUseVec[0]);
+			foreach(BattleSkillIconUnit unit in unitVec){
+
+                DelSkillIcon(unit);
 			}
 		}
 		
 		public void Dispose()
         {
+            skillIconGO.SetActive(false);
 		}
     }
 }

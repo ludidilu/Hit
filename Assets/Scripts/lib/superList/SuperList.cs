@@ -8,8 +8,9 @@ using System;
 namespace xy3d.tstd.lib.superList
 {
 
-	[RequireComponent (typeof(Image))]
-	[RequireComponent (typeof(Mask))]
+//	[RequireComponent (typeof(Image))]
+//	[RequireComponent (typeof(Mask))]
+	[RequireComponent (typeof(RectMask2D))]
 	[RequireComponent (typeof(ScrollRect))]
 	public class SuperList : MonoBehaviour
 	{
@@ -32,6 +33,8 @@ namespace xy3d.tstd.lib.superList
 		private float cellWidth;
 		private float cellHeight;
 
+		private float cellScale;
+
 		private bool isVertical;
 
 		private float containerWidth;
@@ -47,32 +50,11 @@ namespace xy3d.tstd.lib.superList
 
 		private int showIndex;
 		private int selectedIndex = -1;
-
-//		public delegate void CellClickDelegate (object data);
+		private float curPercent = 0;
+		
+		
 		public Action<object> CellClickHandle;
 		public Action<int> CellClickIndexHandle;
-
-		
-		//	public void Init<T>(GameObject _go,float _width,float _height,float _cellWidth,float _cellHeight,float _verticalGap,float _horizontalGap,bool _isVertical,List<T> _data){
-		//
-		//		width = _width;
-		//		height = _height;
-		//		cellWidth = _cellWidth;
-		//		cellHeight = _cellHeight;
-		//		verticalGap = _verticalGap;
-		//		horizontalGap = _horizontalGap;
-		//		isVertical = _isVertical;
-		//
-		//		go = _go;
-		//
-		//		gameObject.GetComponent<RectTransform> ().sizeDelta = new Vector2 (width, height);
-		//
-		//		Resize ();
-		//
-		//		CreateCells ();
-		//
-		//		SetData<T> (_data);
-		//	}
 
 		public void SetData<T> (List<T> _data)
 		{
@@ -93,7 +75,7 @@ namespace xy3d.tstd.lib.superList
 					containerHeight = height;
 				}
 
-                rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, 0f);
+				rectTransform.anchoredPosition = new Vector2 (rectTransform.anchoredPosition.x, 0f);
 				rectTransform.offsetMin = new Vector2 (rectTransform.offsetMin.x, -containerHeight);
 
 			} else {
@@ -105,7 +87,7 @@ namespace xy3d.tstd.lib.superList
 					containerWidth = width;
 				}
 
-				rectTransform.anchoredPosition = new Vector2(0f, rectTransform.anchoredPosition.y);
+				rectTransform.anchoredPosition = new Vector2 (0f, rectTransform.anchoredPosition.y);
 				rectTransform.offsetMax = new Vector2 (containerWidth, rectTransform.offsetMax.y);
 			}
 
@@ -121,33 +103,84 @@ namespace xy3d.tstd.lib.superList
 			showPool.Clear ();
 
 			ResetPos (0);
+
+			curPercent = 0;
 		}
 
-        public void Clear()
-        {
-            data.Clear();
-            SetData(data);
-        }
+		public void SetDataAndKeepLocation<T> (List<T> _data)
+		{
+			float percent = curPercent;
+
+			SetData<T> (_data);
+
+			SetCurPercent (percent);
+		}
+
+		public void Clear ()
+		{
+			data.Clear ();
+			SetData (data);
+		}
 
 		private void SetSize ()
 		{
 
 			if (isVertical) {
 
-				int n = (int)(height / (cellHeight + verticalGap));
+				float tmpCellWidth = (go.transform as RectTransform).rect.width;
 
-				if (height - n * (cellHeight + verticalGap) < verticalGap) {
+				if (width >= tmpCellWidth) {
 
-					rowNum = n + 1;
+					colNum = (int)Mathf.Floor ((width - tmpCellWidth) / (tmpCellWidth + horizontalGap)) + 1;
+
+					cellScale = 1;
+
+					cellWidth = tmpCellWidth;
+					cellHeight = (go.transform as RectTransform).rect.height;
 
 				} else {
 
+					colNum = 1;
+
+					cellScale = width / tmpCellWidth;
+
+					cellWidth = width;
+					cellHeight = (go.transform as RectTransform).rect.height * cellScale;
+				}
+
+				int n = (int)(height / (cellHeight + verticalGap));
+				
+				if (height - n * (cellHeight + verticalGap) < verticalGap) {
+					
+					rowNum = n + 1;
+					
+				} else {
+					
 					rowNum = n + 2;
 				}
 
-				colNum = (int)Mathf.Floor ((width - cellWidth) / (cellWidth + horizontalGap)) + 1;
-
 			} else {
+
+				float tmpCellHeight = (go.transform as RectTransform).rect.height;
+
+				if (height >= tmpCellHeight) {
+
+					rowNum = (int)Mathf.Floor ((height - tmpCellHeight) / (tmpCellHeight + verticalGap)) + 1;
+
+					cellScale = 1;
+
+					cellWidth = (go.transform as RectTransform).rect.width;
+					cellHeight = tmpCellHeight;
+
+				} else {
+
+					rowNum = 1;
+					
+					cellScale = height / tmpCellHeight;
+					
+					cellWidth = (go.transform as RectTransform).rect.width * cellScale;
+					cellHeight = height;
+				}
 
 				int n = (int)(width / (cellHeight + verticalGap));
 				
@@ -160,7 +193,7 @@ namespace xy3d.tstd.lib.superList
 					colNum = n + 2;
 				}
 				
-				rowNum = (int)Mathf.Floor ((height - cellHeight) / (cellHeight + verticalGap)) + 1;
+//				rowNum = (int)Mathf.Floor ((height - cellHeight) / (cellHeight + verticalGap)) + 1;
 
 			}
 		}
@@ -173,12 +206,14 @@ namespace xy3d.tstd.lib.superList
 				GameObject unit = GameObject.Instantiate (go);
 				
 				unit.transform.SetParent (pool.transform, false);
+
+				(unit.transform as RectTransform).localScale = new Vector3 (cellScale, cellScale, cellScale);
 				
-				unit.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
+				(unit.transform as RectTransform).pivot = new Vector2 (0, 1);
 				
-				unit.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);
+				(unit.transform as RectTransform).anchorMin = new Vector2 (0, 1);
 				
-				unit.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
+				(unit.transform as RectTransform).anchorMax = new Vector2 (0, 1);
 
 				hidePool.Add (unit);
 			}
@@ -206,7 +241,7 @@ namespace xy3d.tstd.lib.superList
 			
 			pool.SetActive (false);
 			
-			rectTransform = container.GetComponent<RectTransform> ();
+			rectTransform = container.transform as RectTransform;
 			
 			rectTransform.anchorMin = new Vector2 (0, 1);
 			rectTransform.anchorMax = new Vector2 (0, 1);
@@ -219,11 +254,10 @@ namespace xy3d.tstd.lib.superList
 			scrollRect = gameObject.GetComponent<ScrollRect> ();
 			scrollRect.content = rectTransform;
 			
-			width = GetComponent<RectTransform> ().rect.width;
-			height = GetComponent<RectTransform> ().rect.height;
+			width = (transform as RectTransform).rect.width;
+			height = (transform as RectTransform).rect.height;
 			
-			cellWidth = go.GetComponent<RectTransform> ().rect.width;
-			cellHeight = go.GetComponent<RectTransform> ().rect.height;
+
 			
 			scrollRect.onValueChanged.AddListener (new UnityEngine.Events.UnityAction<Vector2> (OnScroll));
 			
@@ -240,49 +274,45 @@ namespace xy3d.tstd.lib.superList
 
 			if (isVertical) {
 
+				curPercent = _v.y;
+
 				float y;
 
-				if (_v.y < 0) {
+				if (curPercent < 0) {
 					
 					y = 1;
 					
-				} else if (_v.y > 1) {
+				} else if (curPercent > 1) {
 					
 					y = 0;
 					
 				} else {
 					
-					y = 1 - _v.y;
+					y = 1 - curPercent;
 				}
 
 				nowIndex = (int)(y * (containerHeight - height) / (cellHeight + verticalGap)) * colNum;
 
-//				nowIndex = (int)(y / ((cellHeight + verticalGap) / (containerHeight - height))) * colNum;
-
-//				Debug.Log("nowIndex:" + nowIndex + "   y:" + y);
-			
 			} else {
+
+				curPercent = _v.x;
 
 				float x;
 
-				if (_v.x < 0) {
+				if (curPercent < 0) {
 					
 					x = 0;
 					
-				} else if (_v.x > 1) {
+				} else if (curPercent > 1) {
 					
 					x = 1;
 					
 				} else {
 					
-					x = _v.x;
+					x = curPercent;
 				}
 
 				nowIndex = (int)(x * (containerWidth - width) / (cellWidth + horizontalGap)) * rowNum;
-
-//				Debug.Log("nowIndex:" + nowIndex + "   x:" + x);
-
-//				nowIndex = (int)(x / ((cellWidth + horizontalGap) / (containerWidth - cellWidth))) * rowNum;
 			}
 
 			if (nowIndex != showIndex) {
@@ -293,7 +323,7 @@ namespace xy3d.tstd.lib.superList
 
 		private void ResetPos (int _nowIndex)
 		{
-			if(data.Count == 0){
+			if (data.Count == 0) {
 
 				return;
 			}
@@ -439,6 +469,7 @@ namespace xy3d.tstd.lib.superList
 					}
 				}
 			} else {
+
 				if (_nowIndex - showIndex == rowNum) {
 					
 					int col = _nowIndex / rowNum + (colNum - 1);
@@ -607,7 +638,7 @@ namespace xy3d.tstd.lib.superList
 				return;
 			}
 
-			if(needSelectedIndex){
+			if (needSelectedIndex) {
 
 				foreach (GameObject unit in showPool) {
 
@@ -626,16 +657,16 @@ namespace xy3d.tstd.lib.superList
 				selectedIndex = _index;
 			}
 
-			if(selectedIndex != -1 || !needSelectedIndex){
+			if (selectedIndex != -1 || !needSelectedIndex) {
 
 				if (CellClickHandle != null) {
 					
 					CellClickHandle (data [_index]);
 				}
 
-				if(CellClickIndexHandle != null){
+				if (CellClickIndexHandle != null) {
 
-					CellClickIndexHandle(_index);
+					CellClickIndexHandle (_index);
 				}
 			}
 		}
@@ -648,11 +679,11 @@ namespace xy3d.tstd.lib.superList
 
 		public void DisplayIndex (int _index)
 		{
+			float finalPos;
+
 			if (isVertical) {
 
-				float finalPos;
-
-				if(containerHeight > height){
+				if (containerHeight > height) {
 
 					float pos = (_index / colNum) * (cellHeight + verticalGap);
 
@@ -667,7 +698,7 @@ namespace xy3d.tstd.lib.superList
 						finalPos = 1;
 					}
 
-				}else{
+				} else {
 
 					finalPos = 1;
 				}
@@ -676,9 +707,7 @@ namespace xy3d.tstd.lib.superList
 
 			} else {
 
-				float finalPos;
-
-				if(containerWidth > width){
+				if (containerWidth > width) {
 
 					float pos = (_index / rowNum) * (cellWidth + horizontalGap);
 
@@ -693,13 +722,15 @@ namespace xy3d.tstd.lib.superList
 						finalPos = 1;
 					}
 
-				}else{
+				} else {
 
 					finalPos = 0;
 				}
 
 				scrollRect.horizontalNormalizedPosition = finalPos;
 			}
+
+			curPercent = finalPos;
 		}
 
 		public void UpdateItemAt (int _index, object _data)
@@ -717,6 +748,18 @@ namespace xy3d.tstd.lib.superList
 
 					break;
 				}
+			}
+		}
+
+		private void SetCurPercent (float _percent)
+		{
+			if (isVertical) {
+				
+				scrollRect.verticalNormalizedPosition = _percent;
+				
+			} else {
+				
+				scrollRect.horizontalNormalizedPosition = _percent;
 			}
 		}
 	}

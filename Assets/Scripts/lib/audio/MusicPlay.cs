@@ -32,6 +32,7 @@ namespace xy3d.tstd.lib.assetManager{
 			musicPlayer.name = "MusicPlayer";
 
 			audioSource = musicPlayer.AddComponent<AudioSource>();
+            audioSource.mute = true;
 		}
 
 		public void Play(string _path,bool _loop){

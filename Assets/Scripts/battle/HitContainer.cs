@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using xy3d.tstd.lib.csv;
 using xy3d.tstd.lib.gameObjectFactory;
 using xy3d.tstd.lib.textureFactory;
 

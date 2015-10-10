@@ -10,9 +10,18 @@ namespace xy3d.tstd.lib.cameraEffect{
 		public GameObject mainCamera;
 		public Material material;
 
+		private Material materialReal;
+
 		// Use this for initialization
 		void Awake () {
-		
+
+			Debug.Log ("aaaa:" + gameObject.name);
+
+			if(material == null){
+
+				Debug.LogError("CameraEffect has not material!");
+			}
+
 			rt = new RenderTexture(Screen.width,Screen.height,24);
 
 			Camera camera = gameObject.GetComponent<Camera>();
@@ -20,6 +29,8 @@ namespace xy3d.tstd.lib.cameraEffect{
 			camera.cullingMask = 0;
 
 			camera.clearFlags = CameraClearFlags.Nothing;
+
+			materialReal = Material.Instantiate<Material>(material);
 		}
 
 		void OnEnable(){
@@ -41,7 +52,7 @@ namespace xy3d.tstd.lib.cameraEffect{
 
 			GL.LoadPixelMatrix(0, 10, 10,0);
 
-			Graphics.DrawTexture(new Rect(0,0,10,10),rt,material);
+			Graphics.DrawTexture(new Rect(0,0,10,10),rt,materialReal);
 		}
 
 		void Update () {
@@ -50,7 +61,7 @@ namespace xy3d.tstd.lib.cameraEffect{
 				
 				Vector4 v = new Vector4(Input.mousePosition.x / Screen.width,Input.mousePosition.y / Screen.height,0,0);
 				
-				material.SetVector("_Center",v);
+				materialReal.SetVector("_Center",v);
 			}
 		}
 

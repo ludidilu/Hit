@@ -139,7 +139,14 @@ namespace xy3d.tstd.lib.assetManager
 
 #else
 
-			_callBack (AssetDatabase.LoadAssetAtPath<T> (_name));
+			T data = AssetDatabase.LoadAssetAtPath<T> (_name);
+
+			if(data == null){
+
+				Debug.LogError("Resource load fail:" + _name);
+			}
+
+			_callBack (data);
 
 #endif
 		}

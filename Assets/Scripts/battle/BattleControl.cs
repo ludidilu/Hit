@@ -3,7 +3,6 @@ using System.Collections;
 using xy3d.tstd.lib.superTween;
 using System;
 using System.Collections.Generic;
-using xy3d.tstd.lib.csv;
 using UnityEngine.UI;
 using xy3d.tstd.lib.gameObjectFactory;
 using xy3d.tstd.lib.textureFactory;

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using xy3d.tstd.lib.superTween;
@@ -11,11 +10,11 @@ namespace xy3d.tstd.lib.battleHeroTools
     {
 
 
-        public const float ASSET_WIDTH = 512.0f / 20;
-        public const float ASSET_HEIGHT = 128.0f / 20;
+        public const float ASSET_WIDTH = 512.0f / 64;
+        public const float ASSET_HEIGHT = 128.0f / 64;
 
-        public const float FONT_WIDTH = 32.0f / 20;
-        public const float FONT_HEIGHT = 32.0f / 20;
+        public const float FONT_WIDTH = 32.0f / 64;
+        public const float FONT_HEIGHT = 32.0f / 64;
 
         public const int damageUnitNum = 80;
 
@@ -42,9 +41,11 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         private MeshRenderer[] mrList;
 
-        private Dictionary<BattleDamageNumGroup, int> tweenDic = new Dictionary<BattleDamageNumGroup, int>();
-        private int twID;
+//        private Dictionary<BattleDamageNumGroup, int> tweenDic = new Dictionary<BattleDamageNumGroup, int>();
+//        private int twID;
 
+        private GameObject damageGO;
+        private GameObject container;
 
         private static BattleDamageNum _Instance;
 
@@ -66,13 +67,19 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public BattleDamageNum()
         {
-            Init();
         }
 
 
-        private void Init()
+        public void Init(GameObject con)
         {
-			
+            container = con;
+
+            if (damageGO)
+            {
+                damageGO.SetActive(true);
+                return;
+            }
+
 			unitVec = new BattleDamageNumUnit[damageDrawNum,damageUnitNum];
 			
 			unitFreeVec = new BattleDamageNumUnit[damageDrawNum];
@@ -116,40 +123,58 @@ namespace xy3d.tstd.lib.battleHeroTools
 
             Action<GameObject> loadGameObject = delegate(GameObject _go)
             {
-//                PopUpManager.Instance.AddPopUp(damageGO, PopUp2LayerType.Type_Main);
+                damageGO = _go;
+
+                damageGO.transform.SetParent(container.transform, false);
+
                 mrList[0] = _go.GetComponent<MeshRenderer>();
             };
 
-            GameObjectFactory.Instance.GetGameObject("Assets/PlayGround/BattleTool/DamageNum.prefab", loadGameObject, true);      
+            GameObjectFactory.Instance.GetGameObject("Assets/Arts/battle/BattleTool/DamageNum.prefab", loadGameObject, true);      
 		}
 
         public void Update()
         {
-            
-            for (int i = 0; i < damageDrawNum; i++)
-            {
-                if (mrList[i] != null)
-                {
-                    MeshRenderer tempMR = mrList[i];
-                    for (int m = 0; m < damageUnitNum; m++)
-                    {
-                        BattleDamageNumUnit tempUnit = unitVec[i,m];
-                        Vector4 temp = tempUnit.GetFix();
-                        tempMR.sharedMaterial.SetVector("fix" + m.ToString(), temp);
-                    }
+			if(mrList != null)
+			{
 
-                    for (int n = 0; n < damageGroupNum; n++)
-                    {
-                        BattleDamageNumGroup tempGroup = groupVec[i, n];
-                        tempMR.sharedMaterial.SetVector("positions" + n.ToString(), tempGroup.GetPositionsVec());
-                        tempMR.sharedMaterial.SetMatrix("myMatrix" + n.ToString(), tempGroup.GetMatrix());
-                    }
-                }
-            }
+
+
+
+	            for (int i = 0; i < damageDrawNum; i++)
+	            {
+	                if (mrList[i] != null)
+	                {
+	                    MeshRenderer tempMR = mrList[i];
+	                    for (int m = 0; m < damageUnitNum; m++)
+	                    {
+	                        BattleDamageNumUnit tempUnit = unitVec[i,m];
+	                        if (tempUnit.State == 1 || tempUnit.IsChange)
+	                        {
+	                            if (tempUnit.IsChange) tempUnit.IsChange = false;
+	                            tempMR.material.SetVector("fix" + m.ToString(), tempUnit.GetFix());
+	                        }
+	                        
+	                    }
+
+	                    for (int n = 0; n < damageGroupNum; n++)
+	                    {
+	                        BattleDamageNumGroup tempGroup = groupVec[i, n];
+	                        if (tempGroup.State == 1 || tempGroup.IsChange)
+	                        {
+	                            if (tempGroup.IsChange) tempGroup.IsChange = false;
+	                            tempMR.material.SetVector("positions" + n.ToString(), tempGroup.GetPositionsVec());
+	                            tempMR.material.SetMatrix("myMatrix" + n.ToString(), tempGroup.GetMatrix());
+	                        }
+	                        
+	                    }
+	                }
+	            }
+			}
         }
 
 
-        public void addDamageNum(string _str, int _color, Vector3 _pos, bool _randomDirection = false, bool _isFly = false)
+        public void AddDamageNum(string _str, int _color, Vector3 _pos, bool _randomDirection = false, bool _isFly = false)
         {
             _pos.y = _pos.y + 1.8f;
 			int nowDrawIndex = -1;
@@ -171,6 +196,8 @@ namespace xy3d.tstd.lib.battleHeroTools
 			BattleDamageNumGroup unit = groupFreeVec[nowDrawIndex];
 
             unit.init(_str, _color);
+
+            unit.State = 1;
 			
 			unit.alpha = 1;
 
@@ -205,10 +232,9 @@ namespace xy3d.tstd.lib.battleHeroTools
             }
 
             if(!_isFly){
+
                 Action scaleCall = delegate()
                 {
-                    SuperTween.Instance.Remove(tweenDic[unit]);
-                    tweenDic.Remove(unit);
                     Samll1(unit);
                 };
 
@@ -216,14 +242,13 @@ namespace xy3d.tstd.lib.battleHeroTools
                 {
                     unit.SetScale(value);
                 };
-                twID = SuperTween.Instance.To(unit.nowScale, targetScale, largeTime, setScaleCall, scaleCall);
-                tweenDic.Add(unit, twID);
-
+                
+				SuperTween.Instance.To(unit.nowScale, targetScale, largeTime, setScaleCall, scaleCall);
+                
             }else{
-                 Action moveCall = delegate()
+
+                Action moveCall = delegate()
                 {
-                    SuperTween.Instance.Remove(tweenDic[unit]);
-                    tweenDic.Remove(unit);
                     MoveOver(unit);
                 };
 
@@ -232,8 +257,9 @@ namespace xy3d.tstd.lib.battleHeroTools
                     unit.pos.y = value;
                     unit.alpha = 1- (value - _pos.y)/flyHeight;
                 };
-                twID = SuperTween.Instance.To(unit.pos.y, unit.pos.y + flyHeight, flyTime, setMoveCall, moveCall);
-                 tweenDic.Add(unit, twID);
+
+                SuperTween.Instance.To(unit.pos.y, unit.pos.y + flyHeight, flyTime, setMoveCall, moveCall);
+                
             }
 		}
 
@@ -241,8 +267,6 @@ namespace xy3d.tstd.lib.battleHeroTools
         {
             Action scaleCall = delegate()
             {
-                SuperTween.Instance.Remove(tweenDic[_unit]);
-                tweenDic.Remove(_unit);
                 Small1Over(_unit);
             };
 
@@ -250,20 +274,18 @@ namespace xy3d.tstd.lib.battleHeroTools
             {
                 _unit.SetScale(value);
             };
-            twID = SuperTween.Instance.To(_unit.nowScale, small1Scale, small1Time, setScaleCall, scaleCall);
-             tweenDic.Add(_unit, twID);
+
+            SuperTween.Instance.To(_unit.nowScale, small1Scale, small1Time, setScaleCall, scaleCall);
         }
 
         public void Small1Over(BattleDamageNumGroup _unit)
         {
             Action waitCall = delegate()
             {
-                SuperTween.Instance.Remove(tweenDic[_unit]);
-                tweenDic.Remove(_unit);
                 Small(_unit);
             };
-            twID = SuperTween.Instance.DelayCall(waitTimeConst, waitCall);
-             tweenDic.Add(_unit, twID);
+
+            SuperTween.Instance.DelayCall(waitTimeConst, waitCall);
         }
 
         public void Small(BattleDamageNumGroup _unit)
@@ -271,8 +293,6 @@ namespace xy3d.tstd.lib.battleHeroTools
 
             Action scaleCall = delegate()
             {
-                SuperTween.Instance.Remove(tweenDic[_unit]);
-                tweenDic.Remove(_unit);
                 MoveOver(_unit);
             };
 
@@ -280,16 +300,16 @@ namespace xy3d.tstd.lib.battleHeroTools
             {
                 _unit.SetScale(value);
             };
-            twID = SuperTween.Instance.To(_unit.nowScale, 0, smallTime, setScaleCall, scaleCall);
-             tweenDic.Add(_unit, twID);
+            
+			SuperTween.Instance.To(_unit.nowScale, 0, smallTime, setScaleCall, scaleCall);
         }
 
         public void MoveOver(BattleDamageNumGroup _unit)
         {
-            delDamageGroup(_unit);
+            DelDamageGroup(_unit);
         }
 
-        public BattleDamageNumUnit getDamageUnit(BattleDamageNumGroup _group)
+        public BattleDamageNumUnit GetDamageUnit(BattleDamageNumGroup _group)
         {
 
             BattleDamageNumUnit unit = unitFreeVec[_group.drawIndex];
@@ -301,10 +321,14 @@ namespace xy3d.tstd.lib.battleHeroTools
 			return unit;
 		}
 
-        public void delDamageGroup(BattleDamageNumGroup _unit)
+        public void DelDamageGroup(BattleDamageNumGroup _unit)
         {
 			
 			_unit.alpha = 0;
+
+            _unit.IsChange = true;
+
+            _unit.State = 0;
 			
 			for(int i = 0 ; i < _unit.unitVec.Length ; i++){
 				
@@ -346,7 +370,7 @@ namespace xy3d.tstd.lib.battleHeroTools
 			}
 		}
 		
-		public void clearAll()
+		public void ClearAll()
         {
 			
 			for(int i = 0 ; i < damageDrawNum ; i++){
@@ -359,14 +383,14 @@ namespace xy3d.tstd.lib.battleHeroTools
 					
 					tmpGroup = tmpGroup.nextGroup;
 					
-					delDamageGroup(tmpGroup2);
+					DelDamageGroup(tmpGroup2);
 				}
 			}
 		}
 		
-		public void dispose()
+		public void Dispose()
         {
-			
+            damageGO.SetActive(false);
 		}
     }
 }

@@ -6,21 +6,20 @@ using System;
 using xy3d.tstd.lib.assetManager;
 using System.Collections.Generic;
 using xy3d.tstd.lib.assetBundleManager;
+using System.IO;
 
 public class AssetBundleTools{
-	
+
 	[MenuItem("AssetBundle/清除所有选中对象的AssetBundle名字")]
 	public static void ClearSelectedAssetBundleName(){
-		
+
 		UnityEngine.Object[] objects = Selection.objects;
 		
 		foreach(UnityEngine.Object obj in objects){
 			
 			string path = AssetDatabase.GetAssetPath(obj);
-			
-			AssetImporter importer = AssetImporter.GetAtPath(path);
-			
-			importer.assetBundleName = null;
+
+			SetAssetBundleName(path,null);
 
 			AssetDatabase.RemoveUnusedAssetBundleNames();
 		}
@@ -36,63 +35,32 @@ public class AssetBundleTools{
 			string path = AssetDatabase.GetAssetPath(obj);
 
 			SetAssetBundleName(path,obj.name);
-			
-//			AssetImporter importer = AssetImporter.GetAtPath(path);
-//
-//			importer.assetBundleName = obj.name;
 		}
 	}
 
 	public static void SetAssetBundleName(string _path,string _name){
 
 		AssetImporter importer = AssetImporter.GetAtPath(_path);
-		
+
 		importer.assetBundleName = _name;
 	}
-
-//	[MenuItem("AssetBundle/设置所有选中对象的AssetBundle名字为uitexture")]
-//	public static void SetAssetBundleNameWith(){
-//		
-//		UnityEngine.Object[] objects = Selection.objects;
-//		
-//		foreach(UnityEngine.Object obj in objects){
-//			
-//			string path = AssetDatabase.GetAssetPath(obj);
-//			
-//			AssetImporter importer = AssetImporter.GetAtPath(path);
-//			
-//			importer.assetBundleName = "uitexture";
-//		}
-//	}
 
 	[MenuItem("AssetBundle/打包生成AssetBundle以及依赖列表:PC")]
 	public static void CreateAssetBundlePC(){
 
 		CreateAssetBundle(BuildTarget.StandaloneWindows64);
-
-//		AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles (Application.streamingAssetsPath + "/" + AssetBundleManager.path,BuildAssetBundleOptions.UncompressedAssetBundle);
-//		
-//		CreateAssetBundleDat(manifest);
 	}
 
 	[MenuItem("AssetBundle/打包生成AssetBundle以及依赖列表:Android")]
 	public static void CreateAssetBundleAndroid(){
 
 		CreateAssetBundle(BuildTarget.Android);
-
-//		AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles (Application.streamingAssetsPath + "/" + AssetBundleManager.path,BuildAssetBundleOptions.UncompressedAssetBundle,BuildTarget.Android);
-//		
-//		CreateAssetBundleDat(manifest);
 	}
 
 	[MenuItem("AssetBundle/打包生成AssetBundle以及依赖列表:IOS")]
 	public static void CreateAssetBundleIOS(){
 
 		CreateAssetBundle(BuildTarget.iOS);
-
-//		AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles (Application.streamingAssetsPath + "/" + AssetBundleManager.path,BuildAssetBundleOptions.UncompressedAssetBundle,BuildTarget.iOS);
-//		
-//		CreateAssetBundleDat(manifest);
 	}
 
 	private static void CreateAssetBundle(BuildTarget _buildTarget){
@@ -119,7 +87,12 @@ public class AssetBundleTools{
 	}
 
 	private static void CreateAssetBundleDat(AssetBundleManifest manifest){
-		
+
+		if(manifest == null){
+
+			return;
+		}
+
 		string[] abs = manifest.GetAllAssetBundles ();
 		
 		AssetBundle[] aaaa = new AssetBundle[abs.Length];
@@ -223,6 +196,17 @@ public class AssetBundleTools{
 				
 				aaa.Unload (true);
 			}
+		}
+	}
+
+	[MenuItem("AssetBundle/清除所有AssetBundle设置  千万不要乱点！！！")]
+	public static void ClearAllAssetBundleName(){
+		
+		string[] names = AssetDatabase.GetAllAssetBundleNames();
+		
+		foreach(string assetBundleName in names){
+			
+			AssetDatabase.RemoveAssetBundleName(assetBundleName,true);
 		}
 	}
 }

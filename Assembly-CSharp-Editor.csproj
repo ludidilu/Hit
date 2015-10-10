@@ -45,6 +45,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\lib\CameraPath3\Editor\CameraPathAnimatorEditor.cs" />
+     <Compile Include="Assets\Scripts\lib\CameraPath3\Editor\CameraPathDualControl.cs" />
+     <Compile Include="Assets\Scripts\lib\CameraPath3\Editor\CameraPathEditor.cs" />
+     <Compile Include="Assets\Scripts\lib\CameraPath3\Editor\CameraPathEditorInspectorGUI.cs" />
+     <Compile Include="Assets\Scripts\lib\CameraPath3\Editor\CameraPathEditorSceneGUI.cs" />
+     <Compile Include="Assets\Scripts\lib\CameraPath3\Editor\CameraPathMenu.cs" />
      <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Editor\ApiSignup.cs" />
      <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Editor\ApiSignupWindow.cs" />
      <Compile Include="Assets\Scripts\lib\SRDebugger\Scripts\Editor\ProfilerCameraListenerEditor.cs" />
@@ -61,27 +67,32 @@
      <Compile Include="Assets\Scripts\lib\tools\Editor\sxh\CreatePrefabXML.cs" />
      <Compile Include="Assets\Scripts\lib\tools\Editor\zhangwenxin\CreateDamageNumPrefab.cs" />
      <Compile Include="Assets\Scripts\lib\tools\Editor\zhangwenxin\CreateHeroShadowPrefab.cs" />
+     <Compile Include="Assets\Scripts\lib\tools\Editor\zhangwenxin\CreateHeroSkillIconPrefab.cs" />
      <Compile Include="Assets\Scripts\lib\tools\Editor\zhangwenxin\CreateHpBarPrefab.cs" />
-     <None Include="Assets\Scripts\lib\shader\WeaponWithLightningMove.shader" />
-     <None Include="Assets\Scripts\lib\shader\Weapon.shader" />
-     <None Include="Assets\Scripts\lib\shader\ParticleAdditive_1.shader" />
-     <None Include="Assets\Scripts\lib\shader\BattleHeroDamagePass.shader" />
-     <None Include="Assets\Scripts\lib\shader\UI_Transparent_2.shader" />
-     <None Include="Assets\Scripts\lib\shader\SimpleShader.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\Water.shader" />
+     <None Include="Assets\Scripts\lib\CameraPath3\3.1x Upgrade readme.txt" />
+     <None Include="Assets\Scripts\lib\shader\Resources\WeaponWithLightningMove.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\Weapon.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\ParticleAdditive_1.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\BattleHeroDamagePass.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\UI_Transparent_2.shader" />
+     <None Include="Assets\Scripts\lib\CameraPath3\readme.txt" />
+     <None Include="Assets\Scripts\lib\CameraPath3\versionHistory.txt" />
+     <None Include="Assets\Scripts\lib\shader\Resources\SimpleShader.shader" />
      <None Include="Assets\Scripts\lib\SRDebugger\README.txt" />
-     <None Include="Assets\Scripts\lib\shader\BattleSkillIconPass.shader" />
-     <None Include="Assets\Scripts\lib\shader\BattleHeroShadowPass.shader" />
-     <None Include="Assets\Scripts\lib\shader\BattleHeroHpPass.shader" />
-     <None Include="Assets\Scripts\lib\shader\UIParticleAdditiveBillBoard.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\BattleSkillIconPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\BattleHeroShadowPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\BattleHeroHpPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\UIParticleAdditiveBillBoard.shader" />
      <None Include="Assets\Scripts\lib\SRDebugger\UI\Fonts\FONT LICENSE.txt" />
-     <None Include="Assets\Scripts\lib\shader\ImageGrayShader.shader" />
-     <None Include="Assets\Scripts\lib\shader\UIParticleAdditiveMesh.shader" />
-     <None Include="Assets\Scripts\lib\shader\SimpleColorShader.shader" />
-     <None Include="Assets\Scripts\lib\shader\Font_Transparent_2.shader" />
-     <None Include="Assets\Scripts\lib\shader\Hero.shader" />
-     <None Include="Assets\Scripts\lib\shader\UILightningMove.shader" />
-     <None Include="Assets\Scripts\lib\shader\BattleSpeedPass.shader" />
-     <None Include="Assets\Scripts\lib\shader\RadiosBlur.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\ImageGrayShader.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\UIParticleAdditiveMesh.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\SimpleColorShader.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\Font_Transparent_2.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\Hero.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\UILightningMove.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\BattleSpeedPass.shader" />
+     <None Include="Assets\Scripts\lib\shader\Resources\RadiosBlur.shader" />
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>

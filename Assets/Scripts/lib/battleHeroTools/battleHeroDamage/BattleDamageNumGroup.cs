@@ -21,7 +21,7 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public Vector3 pos = new Vector3();
         public Vector3 nonePos = new Vector3();
-        private Vector3 scale = new Vector3(0.5f, 0.5f, 0.5f);
+        private Vector3 scale = new Vector3(1, 1, 1);
         public Quaternion rotation = Quaternion.Euler(0, 0, 0);
         private Matrix4x4 matrix = new Matrix4x4();
 
@@ -35,12 +35,47 @@ namespace xy3d.tstd.lib.battleHeroTools
 
         public float nowScale = 1;
 
+        private int state;
+
+        public int State
+        {
+            get { return state; }
+            set { 
+                state = value;
+                if (unitVec != null)
+                {
+                    foreach (BattleDamageNumUnit unit in unitVec)
+                    {
+                        unit.State = state;
+                    }
+                }
+            }
+        }
+
+        private bool isChange = true;
+
+        public bool IsChange
+        {
+            get { return isChange; }
+            set {
+                isChange = value;
+                if (unitVec != null)
+                {
+                    foreach (BattleDamageNumUnit unit in unitVec)
+                    {
+                        unit.IsChange = isChange;
+                    }
+                }
+            }
+        }
+
 		
 		public BattleDamageNumGroup(int _drawIndex, int _index)
 		{
 			drawIndex = _drawIndex;
 			index = _index;
-            
+
+            IsChange = true;
 		}
 
         public void init(string _str, int _color)
@@ -51,7 +86,7 @@ namespace xy3d.tstd.lib.battleHeroTools
             
 			for(i = 0 ; i < _str.Length ; i++){
 
-                unitVec[i] = bdm.getDamageUnit(this);
+                unitVec[i] = bdm.GetDamageUnit(this);
 				
 				m = picStr.IndexOf(_str[i]);
 				

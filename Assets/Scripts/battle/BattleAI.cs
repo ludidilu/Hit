@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using xy3d.tstd.lib.csv;
 
 public class BattleAI : BattlePlayerControl{
 

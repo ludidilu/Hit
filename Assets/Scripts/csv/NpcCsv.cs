@@ -7,4 +7,5 @@ public class NpcCsv : CsvBase {
 	public int hp;
 	public int[] skill;
 	public int level;
+	public bool loseHpWhenFree;
 }

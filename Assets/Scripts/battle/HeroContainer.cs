@@ -45,6 +45,10 @@ public class HeroContainer : MonoBehaviour {
 
 	[HideInInspector]public SkillCsv csv;
 
+	private float loseHpTime;
+
+	private float loseHpValue = 0;
+
 	protected Dictionary<int, BattleBuff> buffDic = new Dictionary<int, BattleBuff> ();
 
 	protected List<GameObject> buffList = new List<GameObject> ();
@@ -174,6 +178,11 @@ public class HeroContainer : MonoBehaviour {
 	private void SetState(int _state){
 
 		state = _state;
+
+		if (state == -1 && npcCsv.loseHpWhenFree) {
+
+			SetLoseHpTime (BattleConstData.LOSEHPWHENFREE_TIME);
+		}
 	}
 
 	public void GetHit(ref float _deltaTime,ref float _max,List<int> _hitReal,List<int> _hitIndex){
@@ -236,7 +245,7 @@ public class HeroContainer : MonoBehaviour {
 			RemoveBuff (csvID);
 		}
 
-		if(state != -1){
+		if (state != -1) {
 
 			float addPercent = _deltaTime / csv.allTime * speed;
 			
@@ -244,19 +253,19 @@ public class HeroContainer : MonoBehaviour {
 			
 			bool isOver = false;
 			
-			for(int m = 0 ; m < csv.time.Length ; m++){
+			for (int m = 0; m < csv.time.Length; m++) {
 				
-				float tmp = (tt + csv.time[m]) / csv.allTime;
+				float tmp = (tt + csv.time [m]) / csv.allTime;
 				
-				if(tmp >= percent){
+				if (tmp >= percent) {
 					
-					if(tmp < percent + addPercent){
+					if (tmp < percent + addPercent) {
 						
-						if(m < csv.time.Length - 1){
+						if (m < csv.time.Length - 1) {
 
-							SetState (csv.type[m + 1]);
+							SetState (csv.type [m + 1]);
 
-						}else{
+						} else {
 							
 							isOver = true;
 						}
@@ -265,20 +274,34 @@ public class HeroContainer : MonoBehaviour {
 					break;
 				}
 				
-				tt = tt + csv.time[m];
+				tt = tt + csv.time [m];
 			}
 			
-			if(!isOver){
+			if (!isOver) {
 				
 				percent = percent + addPercent;
 
-				bar.Move(_deltaTime);
+				bar.Move (_deltaTime);
 
-				hitContainer.Move(_deltaTime);
+				hitContainer.Move (_deltaTime);
 
-			}else{
+			} else {
 				
-				SkillOver();
+				SkillOver ();
+			}
+
+		} else {
+
+			if(npcCsv.loseHpWhenFree){
+
+				loseHpTime = loseHpTime - _deltaTime;
+
+				if(loseHpTime <= 0){
+
+					BeDamage((int)(npcCsv.hp * loseHpValue));
+
+					SetLoseHpTime(BattleConstData.LOSEHPWHENFREE_TIME + loseHpTime);
+				}
 			}
 		}
 	}
@@ -367,8 +390,10 @@ public class HeroContainer : MonoBehaviour {
 		GameObject.Destroy (go);
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
+	private void SetLoseHpTime(float _time){
+
+		loseHpTime = _time;
+
+		loseHpValue = loseHpValue + BattleConstData.LOSEHPWHENFREE_VALUE;
 	}
 }

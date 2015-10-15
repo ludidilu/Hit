@@ -208,7 +208,7 @@ public class HeroContainer : MonoBehaviour {
 					
 					if(percent + addPercent >= tmp){
 						
-						float tmpHitTime = (tmp - percent) * csv.allTime * speed;
+						float tmpHitTime = (tmp - percent) * csv.allTime / speed;
 						
 						if(tmpHitTime < _deltaTime){
 

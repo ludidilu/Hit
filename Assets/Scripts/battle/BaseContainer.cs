@@ -21,7 +21,7 @@ public class BaseContainer : MonoBehaviour {
 		
 		if (transform.childCount > 0) {
 			
-			(transform as RectTransform).anchoredPosition = new Vector2((transform as RectTransform).anchoredPosition.x / heroContainer.speed / transform.localScale.x,0);
+			(transform as RectTransform).anchoredPosition = new Vector2((transform as RectTransform).anchoredPosition.x / heroContainer.speed / transform.localScale.x,(transform as RectTransform).anchoredPosition.y);
 		}
 		
 		transform.localScale = new Vector3 (1 / heroContainer.speed, 1, 1);

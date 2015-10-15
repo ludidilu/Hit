@@ -83,7 +83,7 @@ public class BattleBuff : MonoBehaviour {
 			
 		case 1:
 
-			_deltaTime = buffTime * BattleConstData.SLOW_VALUE + (_deltaTime - buffTime);
+			_deltaTime = buffTime / BattleConstData.SLOW_VALUE + (_deltaTime - buffTime);
 
 			heroContainer.SetSpeed(1 / BattleConstData.SLOW_VALUE);
 			

@@ -50,22 +50,7 @@ public class BattleControl : MonoBehaviour{
 		isMoving++;
 	}
 
-	public void SetSpeed(int _index,float _speed){
-
-		barContainer [_index].SetSpeed (_speed);
-	}
-
 	void Update(){
-
-		if(Input.GetKeyDown(KeyCode.A)){
-
-			barContainer[1].AddBuff(1,3);
-		}
-
-		if(Input.GetKeyDown(KeyCode.B)){
-			
-			barContainer[1].AddBuff(2,4);
-		}
 
 		if (isMoving > 0) {
 
@@ -73,12 +58,10 @@ public class BattleControl : MonoBehaviour{
 
 			List<int> hitReal = new List<int>();
 			List<int> hitIndex = new List<int>();
-			
-			float max = float.MaxValue;
 
 			for(int i = 0 ; i < barContainer.Length ; i++){
 
-				barContainer[i].GetHit(ref deltaTime,ref max,hitReal,hitIndex);
+				barContainer[i].GetHit(ref deltaTime,hitReal,hitIndex);
 			}
 
 			for(int i = 0 ; i < barContainer.Length ; i++){
@@ -89,8 +72,6 @@ public class BattleControl : MonoBehaviour{
 			if(hitReal.Count > 0){
 
 				PauseMove();
-
-
 
 				for(int i = 0 ; i < hitReal.Count ; i++){
 

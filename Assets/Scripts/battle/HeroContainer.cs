@@ -179,15 +179,24 @@ public class HeroContainer : MonoBehaviour {
 
 		state = _state;
 
-		if (state == -1 && npcCsv.loseHpWhenFree) {
+		if (npcCsv.loseHpWhenFree) {
 
-			SetLoseHpTime (BattleConstData.LOSEHPWHENFREE_TIME);
-		}
+			if (state == -1) {
+
+				SetLoseHpTime (BattleConstData.LOSEHPWHENFREE_TIME);
+
+			}else {
+				
+				loseHpValue = 0;
+			}
+		} 
 	}
 
-	public void GetHit(ref float _deltaTime,ref float _max,List<int> _hitReal,List<int> _hitIndex){
+	public void GetHit(ref float _deltaTime,List<int> _hitReal,List<int> _hitIndex){
 
 		if(state != -1){
+
+
 
 			float addPercent = _deltaTime / csv.allTime * speed;
 			
@@ -195,13 +204,13 @@ public class HeroContainer : MonoBehaviour {
 				
 				float tmp = csv.hitTime[m] / csv.allTime;
 				
-				if(tmp > percent){
+				if(percent < tmp){
 					
-					if(tmp <= percent + addPercent){
+					if(percent + addPercent >= tmp){
 						
-						float tmpHitTime = (percent + addPercent - tmp) * csv.allTime * speed;
+						float tmpHitTime = (tmp - percent) * csv.allTime * speed;
 						
-						if(tmpHitTime < _max){
+						if(tmpHitTime < _deltaTime){
 
 							_hitReal.Clear();
 							_hitIndex.Clear();
@@ -209,11 +218,9 @@ public class HeroContainer : MonoBehaviour {
 							_hitReal.Add(index);
 							_hitIndex.Add(m);
 
-							_max = tmpHitTime;
+							_deltaTime = tmpHitTime;
 
-							_deltaTime = (tmp - percent) * csv.allTime * speed;
-							
-						}else if(tmpHitTime == _max){
+						}else if(tmpHitTime == _deltaTime){
 
 							_hitReal.Add(index);
 							_hitIndex.Add(m);
@@ -231,6 +238,8 @@ public class HeroContainer : MonoBehaviour {
 		List<int> delList = new List<int> ();
 
 		foreach (KeyValuePair<int,BattleBuff> pair in buffDic) {
+
+			float rec = _deltaTime;
 
 			bool del = pair.Value.PassTime(ref _deltaTime);
 
@@ -257,9 +266,9 @@ public class HeroContainer : MonoBehaviour {
 				
 				float tmp = (tt + csv.time [m]) / csv.allTime;
 				
-				if (tmp >= percent) {
+				if (percent < tmp) {
 					
-					if (tmp < percent + addPercent) {
+					if (percent + addPercent >= tmp) {
 						
 						if (m < csv.time.Length - 1) {
 

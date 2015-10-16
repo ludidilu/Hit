@@ -1,8 +1,8 @@
-编号,Buff名字,是否有害
-number,string,number
-ID,buffName,harm
-1,减速,1
-2,沉默,1
-3,流血,1
-4,破甲,1
-5,保护,0
+编号,Buff名字,是否有害,速度修正,伤害修正,沉默,流血
+number,string,number,number,number,number,number
+ID,buffName,harm,speedFix,damageFix,silent,blood
+1,减速,1,0.5,1,0,0
+2,沉默,1,1,1,1,0
+3,流血,1,1,1,0,1
+4,破甲,1,1,2,0,0
+5,保护,0,1,0.5,0,0

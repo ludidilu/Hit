@@ -9,19 +9,15 @@ using xy3d.tstd.lib.textureFactory;
 
 public class BattleControl : MonoBehaviour{
 
-	public int isMoving = 0;
+	[HideInInspector] public int isMoving = 0;
 
-	private HeroContainer[] barContainer;
+	public HeroContainer[] heroContainer;
 
-	public void Init(GameObject[] _barContainer,int[] _npcID){
+	public void Init(int[] _npcID){
 
-		barContainer = new HeroContainer[_barContainer.Length];
+		for (int i = 0; i < heroContainer.Length; i++) {
 
-		for (int i = 0; i < barContainer.Length; i++) {
-
-			barContainer [i] = _barContainer [i].GetComponent<HeroContainer> ();
-
-			barContainer [i].Init(this,i,_npcID[i]);
+			heroContainer [i].Init(_npcID[i]);
 		}
 
 		GameObjectFactory.Instance.GetGameObject ("Assets/Prefabs/Buff.prefab", null, false);
@@ -59,14 +55,14 @@ public class BattleControl : MonoBehaviour{
 			List<int> hitReal = new List<int>();
 			List<int> hitIndex = new List<int>();
 
-			for(int i = 0 ; i < barContainer.Length ; i++){
+			for(int i = 0 ; i < heroContainer.Length ; i++){
 
-				barContainer[i].GetHit(ref deltaTime,hitReal,hitIndex);
+				heroContainer[i].GetHit(ref deltaTime,hitReal,hitIndex);
 			}
 
-			for(int i = 0 ; i < barContainer.Length ; i++){
+			for(int i = 0 ; i < heroContainer.Length ; i++){
 
-				barContainer[i].MoveBar(deltaTime);
+				heroContainer[i].MoveBar(deltaTime);
 			}
 
 			if(hitReal.Count > 0){
@@ -75,14 +71,14 @@ public class BattleControl : MonoBehaviour{
 
 				for(int i = 0 ; i < hitReal.Count ; i++){
 
-					barContainer[hitReal[i]].Hit(hitIndex[i]);
+					heroContainer[hitReal[i]].Hit(hitIndex[i]);
 				}
 
 				Action callBack = delegate() {
 
 					for(int i = 0 ; i < hitReal.Count ; i++){
 						
-						barContainer[hitReal[i]].HitOver();
+						heroContainer[hitReal[i]].HitOver();
 					}
 
 					ResumeMove();
@@ -95,33 +91,33 @@ public class BattleControl : MonoBehaviour{
 
 	public void BeDamage(int _index,int _damage){
 
-		for(int m = 0 ; m < barContainer.Length ; m++){
+		for(int m = 0 ; m < heroContainer.Length ; m++){
 
 			if(m != _index){
 
-				barContainer [m].BeDamage(_damage);
+				heroContainer [m].BeDamage(_damage);
 			}
 		}
 	}
 
 	public void BeInterrupt(int _index){
 		
-		for(int m = 0 ; m < barContainer.Length ; m++){
+		for(int m = 0 ; m < heroContainer.Length ; m++){
 			
 			if(m != _index){
 				
-				barContainer [m].BeInterrupt();
+				heroContainer [m].BeInterrupt();
 			}
 		}
 	}
 
 	public void AddBuff(int _index,int _buffID,float _buffTime){
 
-		for(int m = 0 ; m < barContainer.Length ; m++){
+		for(int m = 0 ; m < heroContainer.Length ; m++){
 			
 			if(m != _index){
 				
-				barContainer [m].AddBuff(_buffID,_buffTime);
+				heroContainer [m].AddBuff(_buffID,_buffTime);
 			}
 		}
 	}

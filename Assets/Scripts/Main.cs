@@ -11,15 +11,7 @@ public class Main : MonoBehaviour {
 		StaticData.Load<HitCsv> ("hit");
 		StaticData.Load<BuffCsv> ("buff");
 
-		GameObject g1 = GameObject.Find ("OppContainer");
-//
-//		g1.GetComponent<Bar> ().Init (1);
-
-		GameObject g2 = GameObject.Find ("MyContainer");
-
-//		g2.GetComponent<Bar> ().Init (2);
-
-		GetComponent<BattleControl> ().Init (new GameObject[]{g1,g2},new int[]{1,2});
+		GetComponent<BattleControl> ().Init (new int[]{1,2});
 
 		GetComponent<BattleControl> ().StartMove ();
 

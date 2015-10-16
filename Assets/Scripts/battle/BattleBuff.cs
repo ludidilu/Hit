@@ -10,9 +10,9 @@ public class BattleBuff : MonoBehaviour {
 
 	private HeroContainer heroContainer;
 
-	private float buffTime;
+	[HideInInspector] public float buffTime;
 
-	private BuffCsv csv;
+	public BuffCsv csv;
 
 	public void Init(HeroContainer _heroContainer,int _id,float _buffTime){
 
@@ -43,75 +43,47 @@ public class BattleBuff : MonoBehaviour {
 
 	private void BuffAdd(){
 
-		switch (csv.ID) {
+		if (csv.speedFix != 1) {
 
-		case 1:
+			heroContainer.SetSpeed(csv.speedFix);
+		}
 
-			heroContainer.SetSpeed(BattleConstData.SLOW_VALUE);
+		if (csv.damageFix != 1) {
 
-			break;
+			heroContainer.SetDamageFix (csv.damageFix);
+		}
 
-		case 2:
+		if (csv.silent) {
 
-			heroContainer.SetSilent(true);
+			heroContainer.SetSilent (true);
+		}
 
-			break;
+		if (csv.blood) {
 
-		case 3:
-
-			heroContainer.SetBlood(true);
-
-			break;
-
-		case 4:
-			
-			heroContainer.SetDamageFix(BattleConstData.CRACK_VALUE);
-			
-			break;
-
-		case 5:
-
-			heroContainer.SetDamageFix(BattleConstData.PROTECT_VALUE);
-			
-			break;
+			heroContainer.SetBlood (true);
 		}
 	}
 
 	private void BuffRemove(ref float _deltaTime){
 
-		switch (csv.ID) {
+		if (csv.speedFix != 1) {
 			
-		case 1:
-
-			_deltaTime = buffTime / BattleConstData.SLOW_VALUE + (_deltaTime - buffTime);
-
-			heroContainer.SetSpeed(1 / BattleConstData.SLOW_VALUE);
+			heroContainer.SetSpeed(1 / csv.speedFix);
+		}
+		
+		if (csv.damageFix != 1) {
 			
-			break;
-
-		case 2:
+			heroContainer.SetDamageFix (1 / csv.damageFix);
+		}
+		
+		if (csv.silent) {
 			
-			heroContainer.SetSilent(false);
+			heroContainer.SetSilent (false);
+		}
+		
+		if (csv.blood) {
 			
-			break;
-
-		case 3:
-			
-			heroContainer.SetBlood(false);
-			
-			break;
-
-		case 4:
-			
-			heroContainer.SetDamageFix(1 / BattleConstData.CRACK_VALUE);
-			
-			break;
-
-		case 5:
-			
-			heroContainer.SetDamageFix(1 / BattleConstData.PROTECT_VALUE);
-			
-			break;
+			heroContainer.SetBlood (false);
 		}
 	}
 

@@ -7,9 +7,9 @@ using System;
 
 public class HeroContainer : MonoBehaviour {
 
-	private BattleControl battleControl;
+	public BattleControl battleControl;
 
-	private int index;
+	public int index;
 
 	public RectTransform maskRectTransform;
 
@@ -29,9 +29,9 @@ public class HeroContainer : MonoBehaviour {
 
 	[HideInInspector]public float speed;
 
-	[HideInInspector]public bool isSilent;
+	[HideInInspector]public int isSilent;
 
-	private bool isBlood;
+	private int isBlood;
 
 	private int hittedIndex;
 
@@ -49,15 +49,13 @@ public class HeroContainer : MonoBehaviour {
 
 	private float loseHpValue = 0;
 
-	protected Dictionary<int, BattleBuff> buffDic = new Dictionary<int, BattleBuff> ();
+	private Dictionary<int, BattleBuff> buffDic = new Dictionary<int, BattleBuff> ();
 
-	protected List<GameObject> buffList = new List<GameObject> ();
+	private List<GameObject> buffList = new List<GameObject> ();
 
-	public void Init(BattleControl _battleControl,int _index,int _npcID){
+	private List<BattleBuff> buffTimeList = new List<BattleBuff> ();
 
-		index = _index;
-
-		battleControl = _battleControl;
+	public void Init(int _npcID){
 
 		npcCsv = StaticData.GetData<NpcCsv> (_npcID);
 
@@ -66,6 +64,9 @@ public class HeroContainer : MonoBehaviour {
 		hittedIndex = -1;
 
 		speed = 1;
+
+		SetScale ();
+
 		damageFix = 1;
 
 		SetSilent (false);
@@ -142,6 +143,11 @@ public class HeroContainer : MonoBehaviour {
 
 		speed *= _speed;
 
+		SetScale ();
+	}
+
+	private void SetScale(){
+
 		bar.SetScale ();
 
 		hitContainer.SetScale ();
@@ -149,12 +155,12 @@ public class HeroContainer : MonoBehaviour {
 
 	public void SetSilent(bool _b){
 
-		isSilent = _b;
+		isSilent += _b ? 1 : -1;
 	}
 
 	public void SetBlood(bool _b){
 		
-		isBlood = _b;
+		isBlood += _b ? 1 : -1;
 	}
 
 	public void SetDamageFix(float _value){
@@ -196,10 +202,23 @@ public class HeroContainer : MonoBehaviour {
 
 		if(state != -1){
 
-
-
 			float addPercent = _deltaTime / csv.allTime * speed;
-			
+
+//			if(buffTimeList.Count > 0){
+//
+//				float passTime = 0;
+//
+//				foreach(BattleBuff buff in buffTimeList){
+//
+//					bool result = buff.CheckIsOver(ref _deltaTime,ref passTime,ref addPercent);
+//
+//					if(!result){
+//
+//						break;
+//					}
+//				}
+//			}
+
 			for(int m = hittedIndex + 1 ; m < csv.hitTime.Length ; m++){
 				
 				float tmp = csv.hitTime[m] / csv.allTime;
@@ -238,8 +257,6 @@ public class HeroContainer : MonoBehaviour {
 		List<int> delList = new List<int> ();
 
 		foreach (KeyValuePair<int,BattleBuff> pair in buffDic) {
-
-			float rec = _deltaTime;
 
 			bool del = pair.Value.PassTime(ref _deltaTime);
 
@@ -317,7 +334,7 @@ public class HeroContainer : MonoBehaviour {
 
 	public void Hit(int _index){
 
-		if (isBlood) {
+		if (isBlood > 0) {
 
 			BeDamage((int)(hp * BattleConstData.BLOOD_VALUE));
 		}
@@ -355,7 +372,7 @@ public class HeroContainer : MonoBehaviour {
 		hitContainer.HitOver ();
 	}
 
-	public virtual void AddBuff(int _buffID,float _buffTime){
+	public void AddBuff(int _buffID,float _buffTime){
 
 		if (buffDic.ContainsKey (_buffID)) {
 
@@ -373,30 +390,52 @@ public class HeroContainer : MonoBehaviour {
 
 			go.transform.SetParent(buffRectTransform,false);
 
-			(go.transform as RectTransform).anchoredPosition = new Vector2((go.transform as RectTransform).anchoredPosition.x,-buffDic.Count * (go.transform as RectTransform).rect.height);
+			if(index == 1){
+
+				(go.transform as RectTransform).anchoredPosition = new Vector2((go.transform as RectTransform).anchoredPosition.x,(1 + buffDic.Count) * (go.transform as RectTransform).rect.height);
+
+			}else{
+
+				(go.transform as RectTransform).anchoredPosition = new Vector2((go.transform as RectTransform).anchoredPosition.x,-buffDic.Count * (go.transform as RectTransform).rect.height);
+			}
 
 			buffDic.Add (_buffID, buff);
 
 			buffList.Add (go);
+
+			buffTimeList.Add(buff);
 		}
+
+		buffTimeList.Sort (BuffSort.Instance);
 	}
 
-	public virtual void RemoveBuff(int _buffID){
+	public void RemoveBuff(int _buffID){
 
-		GameObject go = buffDic [_buffID].gameObject;
+		BattleBuff buff = buffDic [_buffID];
 
 		buffDic.Remove (_buffID);
 
-		int tmpIndex = buffList.IndexOf (go);
+		int tmpIndex = buffList.IndexOf (buff.gameObject);
 
 		buffList.RemoveAt (tmpIndex);
 
+		buffTimeList.Remove (buff);
+
 		for (int i = tmpIndex; i < buffList.Count; i++) {
 
-			(buffList[i].transform as RectTransform).anchoredPosition = new Vector2((buffList[i].transform as RectTransform).anchoredPosition.x,(buffList[i].transform as RectTransform).anchoredPosition.y + (buffList[i].transform as RectTransform).rect.height);
+			RectTransform rt = buffList[i].transform as RectTransform;
+
+			if(index == 1){
+
+				rt.anchoredPosition = new Vector2(rt.anchoredPosition.x,rt.anchoredPosition.y - rt.rect.height);
+
+			}else{
+
+				rt.anchoredPosition = new Vector2(rt.anchoredPosition.x,rt.anchoredPosition.y + rt.rect.height);
+			}
 		}
 
-		GameObject.Destroy (go);
+		GameObject.Destroy (buff.gameObject);
 	}
 
 	private void SetLoseHpTime(float _time){

@@ -9,7 +9,7 @@ public class BattlePlayerControl : MonoBehaviour{
 	
 	void Update(){
 		
-		if(!heroContainer.isSilent && battleControl.isMoving > 0 && (heroContainer.state == 0 || heroContainer.state == -1)){
+		if(heroContainer.isSilent < 1 && battleControl.isMoving > 0 && (heroContainer.state == 0 || heroContainer.state == -1)){
 			
 			CastSkill();
 		}

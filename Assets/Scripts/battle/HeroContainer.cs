@@ -33,11 +33,17 @@ public class HeroContainer : MonoBehaviour {
 
 	private int isBlood;
 
-	private int hittedIndex;
-
 	private float damageFix;
 
+	private int nextHitIndex;
+	
+	private float nextHitPercent;
+
 	[HideInInspector]public int state;
+
+	private int nextStateIndex;
+
+	private float nextStateTime;
 
 	private int combo;
 	
@@ -59,18 +65,15 @@ public class HeroContainer : MonoBehaviour {
 
 		npcCsv = StaticData.GetData<NpcCsv> (_npcID);
 
-		percent = 0;
-
-		hittedIndex = -1;
-
 		speed = 1;
 
 		SetScale ();
 
 		damageFix = 1;
 
-		SetSilent (false);
-		SetBlood (false);
+		isSilent = 0;
+		isBlood = 0;
+
 		SetState (-1);
 
 		SetCombo (0);
@@ -114,11 +117,25 @@ public class HeroContainer : MonoBehaviour {
 
 		hitContainer.Init ();
 
+		nextStateTime = 0;
+		
+		nextStateIndex = 0;
+
 		SetState (csv.type [0]);
 
 		percent = 0;
 		
-		hittedIndex = -1;
+		nextHitIndex = 0;
+
+		SetNextHitPercent ();
+	}
+
+	private void SetNextHitPercent(){
+
+		if (nextHitIndex < csv.hitTime.Length) {
+			
+			nextHitPercent = csv.hitTime [nextHitIndex] / csv.allTime;
+		}
 	}
 
 	public void BeDamage(int _value){
@@ -185,6 +202,19 @@ public class HeroContainer : MonoBehaviour {
 
 		state = _state;
 
+		if (state == -1) {
+
+			nextStateTime = 0;
+
+			nextStateIndex = 0;
+
+		} else {
+
+			nextStateTime += csv.time[nextStateIndex];
+
+			nextStateIndex++;
+		}
+
 		if (npcCsv.loseHpWhenFree) {
 
 			if (state == -1) {
@@ -198,55 +228,76 @@ public class HeroContainer : MonoBehaviour {
 		} 
 	}
 
-	public void GetHit(ref float _deltaTime,List<int> _hitReal,List<int> _hitIndex){
+	public void GetHit(ref float _deltaTime,List<int> _hitReal){
 
-		if(state != -1){
+		if(state != -1 && nextHitIndex < csv.hitTime.Length){
 
-			float addPercent = _deltaTime / csv.allTime * speed;
+			float addPercent = 0;
 
-//			if(buffTimeList.Count > 0){
-//
-//				float passTime = 0;
-//
-//				foreach(BattleBuff buff in buffTimeList){
-//
-//					bool result = buff.CheckIsOver(ref _deltaTime,ref passTime,ref addPercent);
-//
-//					if(!result){
-//
-//						break;
-//					}
-//				}
-//			}
+			float passTime = 0;
 
-			for(int m = hittedIndex + 1 ; m < csv.hitTime.Length ; m++){
+			float tmpSpeed = speed;
+
+			float lastAddPercent;
+
+			foreach(BattleBuff buff in buffTimeList){
 				
-				float tmp = csv.hitTime[m] / csv.allTime;
-				
-				if(percent < tmp){
-					
-					if(percent + addPercent >= tmp){
-						
-						float tmpHitTime = (tmp - percent) * csv.allTime / speed;
+				if(buff.buffTime > _deltaTime){
+
+					break;
+				}
+
+				if(buff.csv.speedFix != 1){
+
+					lastAddPercent = addPercent;
+
+					addPercent += (buff.buffTime - passTime) / csv.allTime * tmpSpeed;
+
+					if(percent + addPercent >= nextHitPercent){
+
+						float tmpHitTime = passTime + (nextHitPercent - percent - lastAddPercent) * csv.allTime / tmpSpeed;
 						
 						if(tmpHitTime < _deltaTime){
-
+							
 							_hitReal.Clear();
-							_hitIndex.Clear();
-
+							
 							_hitReal.Add(index);
-							_hitIndex.Add(m);
-
+							
 							_deltaTime = tmpHitTime;
-
+							
 						}else if(tmpHitTime == _deltaTime){
-
+							
 							_hitReal.Add(index);
-							_hitIndex.Add(m);
 						}
+
+						return;
 					}
-					
-					break;
+
+					passTime = buff.buffTime;
+
+					tmpSpeed = tmpSpeed / buff.csv.speedFix;
+				}
+			}
+
+			lastAddPercent = addPercent;
+
+			addPercent += (_deltaTime - passTime) / csv.allTime * tmpSpeed;
+
+			if(percent + addPercent >= nextHitPercent){
+
+				float tmpHitTime = passTime + (nextHitPercent - percent - lastAddPercent) * csv.allTime / tmpSpeed;
+				
+				if(tmpHitTime < _deltaTime){
+
+					_hitReal.Clear();
+
+					_hitReal.Add(index);
+
+					_deltaTime = tmpHitTime;
+
+				}else if(tmpHitTime == _deltaTime){
+
+					_hitReal.Add(index);
 				}
 			}
 		}
@@ -256,13 +307,53 @@ public class HeroContainer : MonoBehaviour {
 
 		List<int> delList = new List<int> ();
 
-		foreach (KeyValuePair<int,BattleBuff> pair in buffDic) {
+		float passTime = 0;
 
-			bool del = pair.Value.PassTime(ref _deltaTime);
+		float tmp = 0;
 
-			if(del){
+		if (state != -1) {
+			
+			tmp = nextStateTime / csv.allTime;
+		}
 
-				delList.Add(pair.Key);
+		foreach(BattleBuff buff in buffTimeList){
+			
+			if(buff.buffTime > _deltaTime){
+
+				buff.PassTime(_deltaTime);
+
+			}else{
+
+				delList.Add(buff.csv.ID);
+
+				if (state != -1) {
+
+					float tmpPassTime = buff.buffTime - passTime;
+
+					float addPercent = tmpPassTime / csv.allTime * speed;
+					
+					percent = percent + addPercent;
+					
+					bar.Move (tmpPassTime);
+					
+					hitContainer.Move (tmpPassTime);
+
+					if(percent >= tmp){
+
+						if (nextStateIndex < csv.time.Length) {
+							
+							SetState (csv.type [nextStateIndex]);
+
+						} else {
+							
+							SkillOver ();
+						}
+					}
+
+					passTime = buff.buffTime;
+				}
+
+				buff.BuffRemove();
 			}
 		}
 
@@ -273,47 +364,26 @@ public class HeroContainer : MonoBehaviour {
 
 		if (state != -1) {
 
-			float addPercent = _deltaTime / csv.allTime * speed;
-			
-			float tt = 0;
-			
-			bool isOver = false;
-			
-			for (int m = 0; m < csv.time.Length; m++) {
-				
-				float tmp = (tt + csv.time [m]) / csv.allTime;
-				
-				if (percent < tmp) {
-					
-					if (percent + addPercent >= tmp) {
-						
-						if (m < csv.time.Length - 1) {
+			float tmpPassTime = _deltaTime - passTime;
 
-							SetState (csv.type [m + 1]);
+			float addPercent = tmpPassTime / csv.allTime * speed;
 
-						} else {
-							
-							isOver = true;
-						}
-					}
+			percent = percent + addPercent;
+			
+			bar.Move (tmpPassTime);
+			
+			hitContainer.Move (tmpPassTime);
+
+			if (percent >= tmp) {
+
+				if (nextStateIndex < csv.type.Length) {
+
+					SetState (csv.type [nextStateIndex]);
+
+				} else {
 					
-					break;
+					SkillOver ();
 				}
-				
-				tt = tt + csv.time [m];
-			}
-			
-			if (!isOver) {
-				
-				percent = percent + addPercent;
-
-				bar.Move (_deltaTime);
-
-				hitContainer.Move (_deltaTime);
-
-			} else {
-				
-				SkillOver ();
 			}
 
 		} else {
@@ -332,16 +402,14 @@ public class HeroContainer : MonoBehaviour {
 		}
 	}
 
-	public void Hit(int _index){
+	public void Hit(){
 
 		if (isBlood > 0) {
 
 			BeDamage((int)(hp * BattleConstData.BLOOD_VALUE));
 		}
 
-		hittedIndex = _index;
-
-		HitCsv hitCsv = StaticData.GetData<HitCsv> (csv.hitID[hittedIndex]);
+		HitCsv hitCsv = StaticData.GetData<HitCsv> (csv.hitID[nextHitIndex]);
 
 		float fix = 1 + (combo * BattleConstData.COMBO_VALUE);
 
@@ -365,6 +433,10 @@ public class HeroContainer : MonoBehaviour {
 				AddBuff(buffCsv.ID,hitCsv.buffTime[i]);
 			}
 		}
+
+		nextHitIndex++;
+
+		SetNextHitPercent ();
 	}
 
 	public void HitOver(){

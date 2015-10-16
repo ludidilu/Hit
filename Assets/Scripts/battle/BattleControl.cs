@@ -53,11 +53,10 @@ public class BattleControl : MonoBehaviour{
 			float deltaTime = Time.deltaTime;
 
 			List<int> hitReal = new List<int>();
-			List<int> hitIndex = new List<int>();
 
 			for(int i = 0 ; i < heroContainer.Length ; i++){
 
-				heroContainer[i].GetHit(ref deltaTime,hitReal,hitIndex);
+				heroContainer[i].GetHit(ref deltaTime,hitReal);
 			}
 
 			for(int i = 0 ; i < heroContainer.Length ; i++){
@@ -71,7 +70,7 @@ public class BattleControl : MonoBehaviour{
 
 				for(int i = 0 ; i < hitReal.Count ; i++){
 
-					heroContainer[hitReal[i]].Hit(hitIndex[i]);
+					heroContainer[hitReal[i]].Hit();
 				}
 
 				Action callBack = delegate() {

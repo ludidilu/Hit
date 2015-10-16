@@ -22,11 +22,11 @@ public class BuffSort : IComparer<BattleBuff> {
 
 		if (x.buffTime < y.buffTime) {
 
-			return 1;
+			return -1;
 
 		} else {
 
-			return -1;
+			return 1;
 		}
 	}
 }

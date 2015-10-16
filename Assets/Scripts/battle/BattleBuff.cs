@@ -64,7 +64,7 @@ public class BattleBuff : MonoBehaviour {
 		}
 	}
 
-	private void BuffRemove(ref float _deltaTime){
+	public void BuffRemove(){
 
 		if (csv.speedFix != 1) {
 			
@@ -87,22 +87,11 @@ public class BattleBuff : MonoBehaviour {
 		}
 	}
 
-	public bool PassTime(ref float _deltaTime){
+	public void PassTime(float _deltaTime){
 
-		if(buffTime <= _deltaTime){
-			
-			BuffRemove(ref _deltaTime);
-			
-			return true;
-			
-		}else{
-			
-			buffTime = buffTime - _deltaTime;
-			
-			RefreshScale();
-
-			return false;
-		}
+		buffTime = buffTime - _deltaTime;
+		
+		RefreshScale();
 	}
 
 	// Use this for initialization

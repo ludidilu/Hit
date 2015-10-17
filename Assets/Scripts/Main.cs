@@ -15,11 +15,8 @@ public class Main : MonoBehaviour {
 
 		GetComponent<BattleControl> ().StartMove ();
 
-//		GetComponent<BattleControl> ().SetSpeed (0,0.5f);
+		Application.targetFrameRate = 60;
 
-//		GetComponent<BattleControl> ().CastSkill (0, 1);
-//
-//		GetComponent<BattleControl> ().CastSkill (1, 2);
 	}
 	
 	// Update is called once per frame

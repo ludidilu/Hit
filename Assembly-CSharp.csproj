@@ -52,6 +52,7 @@
      <Compile Include="Assets\Scripts\battle\BattleBuff.cs" />
      <Compile Include="Assets\Scripts\battle\BattleConstData.cs" />
      <Compile Include="Assets\Scripts\battle\BattleControl.cs" />
+     <Compile Include="Assets\Scripts\battle\BattleHpBar.cs" />
      <Compile Include="Assets\Scripts\battle\BattlePlayer.cs" />
      <Compile Include="Assets\Scripts\battle\BattlePlayerControl.cs" />
      <Compile Include="Assets\Scripts\battle\BuffSort.cs" />

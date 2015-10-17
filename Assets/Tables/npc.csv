@@ -1,5 +1,5 @@
 编号,血量,技能,智商,空闲时是否掉血
 number,number,string,number,number
 ID,hp,skill,level,loseHpWhenFree
-1,4000,1$2$3$4,120,1
-2,2000,1$2$3$4,120,1
+1,4000,1$2$3$4,60,1
+2,2000,1$2$3$4,60,1

@@ -19,6 +19,8 @@ public class HeroContainer : MonoBehaviour {
 
 	public HitContainer hitContainer;
 
+	public BattleHpBar hpBar;
+
 	public Text hpText;
 
 	public Text comboText;
@@ -99,6 +101,15 @@ public class HeroContainer : MonoBehaviour {
 		hp = _value;
 
 		hpText.text = hp.ToString ();
+
+		float percent = (float)hp / npcCsv.hp;
+
+		if (percent < 0) {
+
+			percent = 0;
+		}
+
+		hpBar.SetScale (percent);
 	}
 
 	public void CastSkill(int _skillID){

@@ -8,7 +8,9 @@ public class BuffCsv : CsvBase {
 	public bool harm;
 
 	public float speedFix;
+	public float damageFix;
 	public bool silent;
 	public bool blood;
-	public float damageFix;
+	public bool reflect;
+
 }

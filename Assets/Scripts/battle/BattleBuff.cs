@@ -62,6 +62,11 @@ public class BattleBuff : MonoBehaviour {
 
 			heroContainer.SetBlood (true);
 		}
+
+		if (csv.reflect) {
+			
+			heroContainer.SetReflect (true);
+		}
 	}
 
 	public void BuffRemove(){
@@ -84,6 +89,11 @@ public class BattleBuff : MonoBehaviour {
 		if (csv.blood) {
 			
 			heroContainer.SetBlood (false);
+		}
+
+		if (csv.reflect) {
+			
+			heroContainer.SetReflect (false);
 		}
 	}
 

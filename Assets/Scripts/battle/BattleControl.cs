@@ -94,7 +94,12 @@ public class BattleControl : MonoBehaviour{
 
 			if(m != _index){
 
-				heroContainer [m].BeDamage(_damage);
+				int damage = heroContainer [m].BeDamage(_damage);
+
+				if(damage > 0){
+
+					heroContainer[_index].BeDamageWithoutFix(damage);
+				}
 			}
 		}
 	}

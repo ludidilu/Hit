@@ -33,6 +33,8 @@ public class HeroContainer : MonoBehaviour {
 
 	[HideInInspector]public int isSilent;
 
+	private int isReflect;
+
 	private int isBlood;
 
 	private float damageFix;
@@ -75,6 +77,7 @@ public class HeroContainer : MonoBehaviour {
 
 		isSilent = 0;
 		isBlood = 0;
+		isReflect = 0;
 
 		SetState (-1);
 
@@ -149,13 +152,29 @@ public class HeroContainer : MonoBehaviour {
 		}
 	}
 
-	public void BeDamage(int _value){
+	public void BeDamageWithoutFix(int _value){
 
-		SetHp (hp - (int)(_value * damageFix));
+		SetHp (hp - _value);
+	}
+
+	public int BeDamage(int _value){
+
+		int damage = (int)(_value * damageFix);
+
+		BeDamageWithoutFix (damage);
 
 		if (hp < 1) {
 			
 			battleControl.PauseMove ();
+		}
+
+		if (isReflect > 0) {
+
+			return damage;
+
+		} else {
+
+			return 0;
 		}
 	}
 
@@ -189,6 +208,11 @@ public class HeroContainer : MonoBehaviour {
 	public void SetBlood(bool _b){
 		
 		isBlood += _b ? 1 : -1;
+	}
+
+	public void SetReflect(bool _b){
+		
+		isReflect += _b ? 1 : -1;
 	}
 
 	public void SetDamageFix(float _value){
@@ -405,7 +429,7 @@ public class HeroContainer : MonoBehaviour {
 
 				if(loseHpTime <= 0){
 
-					BeDamage((int)(npcCsv.hp * loseHpValue));
+					BeDamageWithoutFix((int)(npcCsv.hp * loseHpValue));
 
 					SetLoseHpTime(BattleConstData.LOSEHPWHENFREE_TIME + loseHpTime);
 				}
@@ -417,7 +441,7 @@ public class HeroContainer : MonoBehaviour {
 
 		if (isBlood > 0) {
 
-			BeDamage((int)(hp * BattleConstData.BLOOD_VALUE));
+			BeDamageWithoutFix((int)(hp * BattleConstData.BLOOD_VALUE));
 		}
 
 		HitCsv hitCsv = StaticData.GetData<HitCsv> (csv.hitID[nextHitIndex]);
